@@ -27,8 +27,8 @@ public struct ClientConfiguration {
         return "\(ipAddress):\(port)"
     }
     
-    /// Determines the amount of logging that the client performs. See `Log.swift`.
-    public var logLevel = 3
+    /// The log to print messages to
+    public var log = Log()
     
     /// The target framerate for issuing commands
     public var framesPerSecond = 60
