@@ -44,4 +44,9 @@ public struct ClientConfiguration {
         return "/pyTanksAPI/\(apiVersion)/player"
     }
     
+    /// The web socket url to connect to
+    public var socketUrl: String {
+        return "ws://\(ipAndPort)\(apiPath)"
+    }
+    
 }
