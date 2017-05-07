@@ -9,6 +9,8 @@
 
 /**
  Manages the writing of logs to standard out. Each instance of this class holds a `logTypes` option set that specifies which types of information should be logged.
+ 
+ - note: This type is not synchronized. Calling code should ensure thread safety.
  */
 public class Log {
    
