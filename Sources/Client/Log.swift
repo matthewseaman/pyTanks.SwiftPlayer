@@ -36,6 +36,9 @@ public class Log {
     
     /**
      Prints a given message to standard out if `logTypes` is/are requested by the `Log`'s requested log types.
+     
+     - parameter message: The message to log
+     - parameter logTypes: The log types to log the message for. You should generally only specify a singular log type, as this acts as an AND (not OR) predicate.
      */
     public func print(_ message: String, for logTypes: LogTypes) {
         if self.logTypes.contains(logTypes) {
