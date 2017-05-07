@@ -6,10 +6,6 @@
 //
 //
 
-#if SWIFT_PACKAGE
-import Foundation
-#endif
-
 
 /**
  An instance of `GameState` stores the current state of a game, including the positions and other properties of all tanks, shells, and walls on the map.
