@@ -6,6 +6,10 @@
 //
 //
 
+#if SWIFT_PACKAGE
+import Foundation
+#endif
+
 
 /**
  An instance of `GameState` stores the current state of a game, including the positions and other properties of all tanks, shells, and walls on the map.
@@ -38,7 +42,7 @@ public class GameState {
      - parameter shells: All shells currently on the map
      - parameter walls: All walls on the map for this match
      */
-    public init(ongoingGame: Bool, myTank: Tank, otherTanks: [Tank], shells: [Shell], walls: [Wall]) {
+    internal init(ongoingGame: Bool, myTank: Tank, otherTanks: [Tank], shells: [Shell], walls: [Wall]) {
         self.isGameOngoing = ongoingGame
         self.myTank = myTank
         self.otherTanks = otherTanks
