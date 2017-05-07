@@ -3,5 +3,8 @@
 import PackageDescription
 
 let package = Package(
-    name: "pyTanks.SwiftPlayer"
+    name: "pyTanks.SwiftPlayer",
+    dependencies: [
+        .Package(url: "https://github.com/daltoniam/Starscream.git", majorVersion: 2)
+    ]
 )
