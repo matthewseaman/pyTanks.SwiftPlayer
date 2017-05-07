@@ -11,6 +11,8 @@
 internal enum JSONError: Error, CustomStringConvertible {
     /// The JSON data was not valid JSON and could not be parsed
     case notValidJSON
+    /// The JSON did not contain a top-level dictionary
+    case noTopLevelDict
     /// The value at `keyPath` was missing
     case missing(keyPath: String)
     /// The `value` at `keyPath` was invlalid
@@ -19,6 +21,8 @@ internal enum JSONError: Error, CustomStringConvertible {
     var description: String {
         switch self {
         case .notValidJSON:
+            return "The received JSON could not be parsed."
+        case .noTopLevelDict:
             return "The received JSON was in an invalid format."
         case .missing(let keyPath):
             return "The received JSON is missing \"\(keyPath)\"."
