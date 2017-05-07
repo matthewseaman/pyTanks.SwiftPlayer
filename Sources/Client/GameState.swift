@@ -29,7 +29,7 @@ public class GameState {
     public var shells: [Shell]
     
     /// All walls on the map for this match
-    public private(set) var walls: [Wall]
+    public internal(set) var walls: [Wall]
     
     /**
      Creates a new `GameState`
