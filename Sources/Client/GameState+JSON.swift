@@ -63,6 +63,17 @@ extension GameState {
             let error = JSONError.missing(keyPath: keyPath)
             log?.print("\(error)", for: .errors)
         }
+        
+        /**
+         Logs an error for the invalid key value
+         
+         - parameter keyPath: Teh key whose value was invalid
+         - parameter value: The invalid value
+         */
+        func logInvalid(keyPath: String, value: CustomStringConvertible) {
+            let error = JSONError.invalid(keyPath: keyPath, value: value)
+            log?.print("\(error)", for: .errors)
+        }
 
         // isGameOngoing
         if let ongoingGame = topLevelDict["\(JSONKey.isGameOngoing)"] as? Bool {
@@ -75,24 +86,30 @@ extension GameState {
         if let tankDict = topLevelDict["\(JSONKey.myTank)"] as? [String : Any] {
             
             // x
+            let myTankXKeyPath = "\(JSONKey.myTank) > \(JSONKey.x)"
             if let x = tankDict["\(JSONKey.x)"] as? Double {
+                if x < 0.0 { logInvalid(keyPath: myTankXKeyPath, value: x) }
                 self.myTank.centerX = x
             } else {
-                logMissing(keyPath: "\(JSONKey.myTank) > \(JSONKey.x)")
+                logMissing(keyPath: myTankXKeyPath)
             }
             
             // y
+            let myTankYKeyPath = "\(JSONKey.myTank) > \(JSONKey.y)"
             if let y = tankDict["\(JSONKey.y)"] as? Double {
+                if y < 0.0 { logInvalid(keyPath: myTankYKeyPath, value: y) }
                 self.myTank.centerY = y
             } else {
-                logMissing(keyPath: "\(JSONKey.myTank) > \(JSONKey.y)")
+                logMissing(keyPath: myTankYKeyPath)
             }
             
             // heading
+            let myTankHeadingKeyPath = "\(JSONKey.myTank) > \(JSONKey.heading)"
             if let heading = tankDict["\(JSONKey.heading)"] as? Double {
+                if heading < 0.0 { logInvalid(keyPath: myTankHeadingKeyPath, value: heading) }
                 self.myTank.heading = heading
             } else {
-                logMissing(keyPath: "\(JSONKey.myTank) > \(JSONKey.heading)")
+                logMissing(keyPath: myTankHeadingKeyPath)
             }
             
             // isMoving
@@ -137,21 +154,27 @@ extension GameState {
                 var tank = Tank(centerX: 0.0, centerY: 0.0, heading: 0.0, isMoving: false, isAlive: false, canShoot: nil, name: nil)
                 
                 // x
+                let tankXKeyPath = "\(JSONKey.otherTanks) > \(JSONKey.x)"
                 if let x = tankDict["\(JSONKey.x)"] as? Double {
+                    if x < 0.0 { logInvalid(keyPath: tankXKeyPath, value: x) }
                     tank.centerX = x
                 } else {
-                    logMissing(keyPath: "\(JSONKey.otherTanks) > \(JSONKey.x)")
+                    logMissing(keyPath: tankXKeyPath)
                 }
                 
                 // y
+                let tankYKeyPath = "\(JSONKey.otherTanks) > \(JSONKey.y)"
                 if let y = tankDict["\(JSONKey.y)"] as? Double {
+                    if y < 0.0 { logInvalid(keyPath: tankYKeyPath, value: y) }
                     tank.centerY = y
                 } else {
                     logMissing(keyPath: "\(JSONKey.otherTanks) > \(JSONKey.y)")
                 }
                 
                 // heading
+                let tankHeadingKeyPath = "\(JSONKey.otherTanks) > \(JSONKey.heading)"
                 if let heading = tankDict["\(JSONKey.heading)"] as? Double {
+                    if heading < 0.0 { logInvalid(keyPath: tankHeadingKeyPath, value: heading) }
                     tank.heading = heading
                 } else {
                     logMissing(keyPath: "\(JSONKey.otherTanks) > \(JSONKey.heading)")
@@ -195,24 +218,30 @@ extension GameState {
                 }
                 
                 // x
+                let shellXKeyPath = "\(JSONKey.shells) > \(JSONKey.x)"
                 if let x = shellDict["\(JSONKey.x)"] as? Double {
+                    if x < 0.0 { logInvalid(keyPath: shellXKeyPath, value: x) }
                     shell.centerX = x
                 } else {
-                    logMissing(keyPath: "\(JSONKey.shells) > \(JSONKey.x)")
+                    logMissing(keyPath: shellXKeyPath)
                 }
                 
                 // y
+                let shellYKeyPath = "\(JSONKey.shells) > \(JSONKey.y)"
                 if let y = shellDict["\(JSONKey.y)"] as? Double {
+                    if y < 0.0 { logInvalid(keyPath: shellYKeyPath, value: y) }
                     shell.centerY = y
                 } else {
-                    logMissing(keyPath: "\(JSONKey.shells) > \(JSONKey.y)")
+                    logMissing(keyPath: shellYKeyPath)
                 }
                 
                 // heading
+                let shellHeadingKeyPath = "\(JSONKey.shells) > \(JSONKey.heading)"
                 if let heading = shellDict["\(JSONKey.heading)"] as? Double {
+                    if heading < 0.0 { logInvalid(keyPath: shellHeadingKeyPath, value: heading) }
                     shell.heading = heading
                 } else {
-                    logMissing(keyPath: "\(JSONKey.shells) > \(JSONKey.heading)")
+                    logMissing(keyPath: shellHeadingKeyPath)
                 }
                 
                 self.shells.append(shell)
@@ -232,31 +261,39 @@ extension GameState {
                 var wall = Wall(width: 1.0, height: 1.0, centerX: 0.0, centerY: 0.0)
                 
                 // width
+                let wallWidthKeyPath = "\(JSONKey.walls) > \(JSONKey.width)"
                 if let width = wallDict["\(JSONKey.width)"] as? Double {
+                    if width < 0.0 { logInvalid(keyPath: wallWidthKeyPath, value: width) }
                     wall.width = width
                 } else {
-                    logMissing(keyPath: "\(JSONKey.walls) > \(JSONKey.width)")
+                    logMissing(keyPath: wallWidthKeyPath)
                 }
                 
                 // height
+                let wallHeightKeyPath = "\(JSONKey.walls) > \(JSONKey.height)"
                 if let height = wallDict["\(JSONKey.height)"] as? Double {
+                    if height < 0.0 { logInvalid(keyPath: wallHeightKeyPath, value: height) }
                     wall.height = height
                 } else {
-                    logMissing(keyPath: "\(JSONKey.walls) > \(JSONKey.height)")
+                    logMissing(keyPath: wallHeightKeyPath)
                 }
                 
                 // x
+                let wallXKeyPath = "\(JSONKey.walls) > \(JSONKey.x)"
                 if let x = wallDict["\(JSONKey.x)"] as? Double {
+                    if x < 0.0 { logInvalid(keyPath: wallXKeyPath, value: x) }
                     wall.centerX = x
                 } else {
-                    logMissing(keyPath: "\(JSONKey.walls) > \(JSONKey.x)")
+                    logMissing(keyPath: wallXKeyPath)
                 }
                 
                 // y
+                let wallYKeyPath = "\(JSONKey.walls) > \(JSONKey.y)"
                 if let y = wallDict["\(JSONKey.y)"] as? Double {
+                    if y < 0.0 { logInvalid(keyPath: wallYKeyPath, value: y) }
                     wall.centerY = y
                 } else {
-                    logMissing(keyPath: "\(JSONKey.walls) > \(JSONKey.y)")
+                    logMissing(keyPath: wallYKeyPath)
                 }
                 
                 self.walls.append(wall)
