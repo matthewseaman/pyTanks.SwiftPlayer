@@ -6,21 +6,28 @@
 //
 //
 
+import Dispatch
+
 
 /**
  Manages the writing of logs to standard out. Each instance of this class holds a `logTypes` option set that specifies which types of information should be logged.
  
- - note: This type is not synchronized. Calling code should ensure thread safety.
+ - note: The setup of this object is not thread safe. Once set up, however, you may call `print` from multiple threads simulataneously without negative side effects.
  */
 public class Log {
    
     /// The log types to send through standard out
-    public var logTypes: LogTypes = .level3
+    public let logTypes: LogTypes
+    
+    /// A serial queue to synchronize log printing
+    private let serialQueue = DispatchQueue(label: "pyTanks Client Log", qos: .utility, attributes: [], autoreleaseFrequency: .workItem, target: nil)
     
     /**
      Creates a log with the default log types. The default log types currently correspond to a level 3: `connectAndDisconnect`, `errors`, `gameEvents`, `aiLogic`, and `fps`.
      */
-    public init() {}
+    public init() {
+        self.logTypes = .level3
+    }
     
     /**
      Create a log for an option set of log types. Desired log types may be mixed and matched.
@@ -39,12 +46,20 @@ public class Log {
     /**
      Prints a given message to standard out if `logTypes` is/are requested by the `Log`'s requested log types.
      
+     - note: This method is asynchronous and synchronized. You may call this method from multiple threads simultaneously, howeve logs will be printed one at a time in the order that they were requested.
+     
      - parameter message: The message to log
      - parameter logTypes: The log types to log the message for. You should generally only specify a singular log type, as this acts as an AND (not OR) predicate.
      */
     public func print(_ message: String, for logTypes: LogTypes) {
-        if self.logTypes.contains(logTypes) {
-            Swift.print(message)
+        serialQueue.async { [weak self] in
+            
+            // In case `self` has been deinitialized
+            guard self != nil else { return }
+            
+            if self!.logTypes.contains(logTypes) {
+                Swift.print(message)
+            }
         }
     }
     
