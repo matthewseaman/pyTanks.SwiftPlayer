@@ -6,10 +6,6 @@
 //
 //
 
-#if SWIFT_PACKAGE
-    import Foundation
-#endif
-
 
 /// A command that may be sent to the server on behalf of a player. These commands control the player's tank.
 public enum Command {
