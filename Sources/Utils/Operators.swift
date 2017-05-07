@@ -6,9 +6,6 @@
 //
 //
 
-#if SWIFT_PACKAGE
-import Foundation
-#endif
 
 /// Creates a `String` with `str` repeated `repeat` times.
 public func *(str: String, repeat: Int) -> String {
