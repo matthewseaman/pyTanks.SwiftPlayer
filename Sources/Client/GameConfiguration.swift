@@ -35,10 +35,10 @@ public struct GameConfiguration {
     public struct MapConfig {
         
         /// The width of the game map, in pixels
-        public let width = 500
+        public let width = 500.0
         
         /// The height of the game map, in pixels
-        public let height = 500
+        public let height = 500.0
         
     }
     
@@ -48,13 +48,13 @@ public struct GameConfiguration {
     public struct TankConfig {
         
         /// The natural speed of the tank, in pixels per second
-        public let speed = 30
+        public let speed = 30.0
         
         /// The width of the tank, in pixels
-        public let width = 10
+        public let width = 10.0
         
         /// The height of the tank, in pixels
-        public let height = 10
+        public let height = 10.0
         
         /// The minimum time, in seconds, to reload the tank's cannon
         public let reloadTime = 1.5
@@ -67,13 +67,13 @@ public struct GameConfiguration {
     public struct ShellConfig {
         
         /// The natural speed of shells, in pixels per second
-        public let speed = 150
+        public let speed = 150.0
         
         /// The width of a shell, in pixels
-        public let width = 1
+        public let width = 1.0
         
         /// The height of a shell, in pixels
-        public let height = 1
+        public let height = 1.0
         
     }
     
