@@ -27,6 +27,12 @@ public class GameClient: WebSocketDelegate {
         return clientConfiguration.log
     }
     
+    /// A closure to exectute on socket connection. Will be executed on background thread.
+    public var onConnect = {}
+    
+    /// A closure to exectute on socket disconnection. Will be executed on background thread.
+    public var onDisconnect = {}
+    
     /**
      Creates a new `GameClient`. Typically, only one of these should be created per run.
      
@@ -40,6 +46,7 @@ public class GameClient: WebSocketDelegate {
     
     public func websocketDidConnect(socket: WebSocket) {
         log.print("Connected to server", for: .connectAndDisconnect)
+        self.onConnect()
     }
     
     public func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
@@ -47,6 +54,7 @@ public class GameClient: WebSocketDelegate {
             log.print(err.localizedDescription, for: .errors)
         }
         log.print("Connection closed - shutting down", for: .connectAndDisconnect)
+        self.onDisconnect()
     }
     
     public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
