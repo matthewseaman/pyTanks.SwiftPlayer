@@ -21,8 +21,8 @@ public struct GameConfiguration {
     /// A configuration for the tank
     public let tank = TankConfig()
     
-    /// A configuration for the bullets
-    public let bullet = BulletConfig()
+    /// A configuration for the shells
+    public let shell = ShellConfig()
     
     /// Creates a `GameConfiguration` with required values.
     public init() {}
@@ -62,17 +62,17 @@ public struct GameConfiguration {
     }
     
     /**
-     Represents a configuration for bullets. These values match with the server and are therefore immutable.
+     Represents a configuration for shells. These values match with the server and are therefore immutable.
      */
-    public struct BulletConfig {
+    public struct ShellConfig {
         
-        /// The natural speed of bullets, in pixels per second
+        /// The natural speed of shells, in pixels per second
         public let speed = 150
         
-        /// The width of a bullet, in pixels
+        /// The width of a shell, in pixels
         public let width = 1
         
-        /// The height of a bullet, in pixels
+        /// The height of a shell, in pixels
         public let height = 1
         
     }
