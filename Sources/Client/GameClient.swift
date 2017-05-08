@@ -8,6 +8,7 @@
 
 import Foundation
 import Dispatch
+import Dispatch
 import Starscream
 
 
@@ -32,6 +33,24 @@ public class GameClient: WebSocketDelegate {
     
     /// A closure to exectute on socket disconnection. Will be executed on background thread.
     public var onDisconnect = {}
+    
+    /// A dispatch queue for sending commands to the server. This is serial because we must be certain that commands are sent one at a time in the order they were requested.
+    private let sendQueue = DispatchQueue(label: "pyTanks Client Send", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
+    
+    /// A dispatch queue for receiving game states from the server. This is serial because we want to be certain we are appending states to the messageQueue in the correct order. (And messageQueue is a shared resource.)
+    private let receiveQueue = DispatchQueue(label: "pyTanks Client Receive", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
+    
+    /// A serial queue for syncronizing access to the `messageQueue` shared resource.
+    private let messagesSyncQueue = DispatchQueue(label: "pyTanks Client message queue sync", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
+    
+    /**
+     A queue of messages (in binary format) from the server. The newest message is at the end.
+     
+     Messages may represent JSON or
+     
+     Messages are pushed onto the end by the `GameClient` and popped off the front by the `GameLoop`.
+     */
+    public var messageQueue = [Data]()
     
     /**
      Creates a new `GameClient`. Typically, only one of these should be created per run.
