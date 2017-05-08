@@ -49,4 +49,7 @@ public struct ClientConfiguration {
         return "ws://\(ipAndPort)\(apiPath)"
     }
     
+    /// Creates a `ClientConfiguration` with default values
+    public init() {}
+    
 }
