@@ -138,14 +138,14 @@ open class CommandLineArgumentParser {
         let isAbreviation: Bool
         let isCommand: Bool
         
-        if fullSpecifier.hasPrefix("-") {
+        if fullSpecifier.hasPrefix("--") {
+            isCommand = false
+            isAbreviation = false
+            specifier = fullSpecifier.substring(from: fullSpecifier.index(fullSpecifier.startIndex, offsetBy: 2))
+        } else if fullSpecifier.hasPrefix("-") {
             isCommand = false
             isAbreviation = true
             specifier = fullSpecifier.substring(from: fullSpecifier.index(after: fullSpecifier.startIndex))
-        } else if fullSpecifier.hasPrefix("--") {
-            isCommand = false
-            isAbreviation = true
-            specifier = fullSpecifier.substring(from: fullSpecifier.index(fullSpecifier.startIndex, offsetBy: 2))
         } else {
             isCommand = true
             isAbreviation = false

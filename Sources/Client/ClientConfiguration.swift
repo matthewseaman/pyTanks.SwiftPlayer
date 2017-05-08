@@ -16,10 +16,10 @@
  */
 public struct ClientConfiguration {
     
-    /// The local server's IP Address
+    /// The pyTank server's IP Address
     public var ipAddress = "localhost"
     
-    /// The local server's port number
+    /// The pyTank server's port number
     public var port: UInt = 9042
     
     /// The formatted IP and port for the local server
