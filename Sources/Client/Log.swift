@@ -115,7 +115,7 @@ public class Log {
         /// Detailed frames-per-second logs
         public static let fps = LogTypes(rawValue: 1 << 4)
         
-        /// Details about input and output when communicating with the server
+        /// Details about input and output when communicating with the server. (i.e. sending commands and receiving game states)
         public static let clientIO = LogTypes(rawValue: 1 << 5)
         
         /// Verbose websocket logging

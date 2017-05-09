@@ -6,6 +6,8 @@
 //
 //
 
+import Foundation
+
 
 /**
  Represents the configuration of the game client powering the player.
@@ -45,8 +47,8 @@ public struct ClientConfiguration {
     }
     
     /// The web socket url to connect to
-    public var socketUrl: String {
-        return "ws://\(ipAndPort)\(apiPath)"
+    public var socketUrl: URL {
+        return URL(string: "ws://\(ipAndPort)\(apiPath)")!
     }
     
     /// Creates a `ClientConfiguration` with default values

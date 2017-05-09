@@ -67,4 +67,6 @@ if let clientConfig = clientConfig() {
     let gameConfig = GameConfiguration()
     
     let client = GameClient(clientConfig: clientConfig, gameConfig: gameConfig)
+    client.start()
+    while true {}
 }

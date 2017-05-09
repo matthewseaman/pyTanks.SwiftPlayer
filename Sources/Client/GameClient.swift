@@ -34,6 +34,9 @@ public class GameClient: WebSocketDelegate {
     /// A closure to exectute on socket disconnection. Will be executed on background thread.
     public var onDisconnect = {}
     
+    /// A general dispatch queue for websocket callbacks. Tasks on this queue usually will simply dispatch the task to a different queue. This needs to be serial in order to maintain order.
+    private let callbackQueue = DispatchQueue(label: "pyTanks Client Callback", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
+    
     /// A dispatch queue for sending commands to the server. This is serial because we must be certain that commands are sent one at a time in the order they were requested.
     private let sendQueue = DispatchQueue(label: "pyTanks Client Send", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
     
@@ -49,8 +52,30 @@ public class GameClient: WebSocketDelegate {
      Messages may represent JSON or
      
      Messages are pushed onto the end by the `GameClient` and popped off the front by the `GameLoop`.
+     
+     - note: This resource is synchronized and may be accessed by multiple threads simultaneously.
      */
-    public var messageQueue = [Data]()
+    public var messageQueue: [Data] {
+        
+        get {
+            return messagesSyncQueue.sync {
+                return _messageQueue
+            }
+        }
+        
+        set {
+            messagesSyncQueue.async {
+                self._messageQueue = newValue
+            }
+        }
+        
+    }
+    
+    /// Underlying storage for `messageQueue`
+    private var _messageQueue = [Data]()
+    
+    /// The currently connected web socket
+    public var webSocket: WebSocket?
     
     /**
      Creates a new `GameClient`. Typically, only one of these should be created per run.
@@ -61,6 +86,27 @@ public class GameClient: WebSocketDelegate {
     public init(clientConfig: ClientConfiguration, gameConfig: GameConfiguration) {
         self.clientConfiguration = clientConfig
         self.gameConfiguration = gameConfig
+    }
+    
+    /**
+     Connects the web socket so that send/receive events may be continuously handled.
+     
+     - note: Once this method returns, all tasks performed by this object, including closure executions,
+     will take place off the main thread.
+     */
+    public func start() {
+        self.webSocket = WebSocket(url: clientConfiguration.socketUrl, writeQueueQOS: .userInitiated)
+        webSocket?.callbackQueue = callbackQueue
+        webSocket?.delegate = self
+        webSocket?.connect()
+    }
+    
+    /**
+     Intentionally disconnects the web socket and stops all tasks performed by this object.
+     */
+    public func stop() {
+        webSocket?.disconnect()
+        self.webSocket = nil
     }
     
     public func websocketDidConnect(socket: WebSocket) {
@@ -77,10 +123,19 @@ public class GameClient: WebSocketDelegate {
     }
     
     public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
+        log.print("Received message from server: \(text)", for: .clientIO)
         
+        receiveQueue.async {
+            let data = text.data(using: .utf8)!
+            self.messageQueue.append(data)
+        }
     }
     
     public func websocketDidReceiveData(socket: WebSocket, data: Data) {
+        log.print("Received binary message from server: \(data)", for: .clientIO)
+    }
+    
+    public func send(command: Command) {
         
     }
     
