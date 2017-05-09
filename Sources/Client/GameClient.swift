@@ -116,7 +116,7 @@ public class GameClient: WebSocketDelegate {
     
     public func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
         if let err = error {
-            log.print(err.localizedDescription, for: .errors)
+            log(error: err)
         }
         log.print("Connection closed - shutting down", for: .connectAndDisconnect)
         self.onDisconnect()
@@ -135,8 +135,46 @@ public class GameClient: WebSocketDelegate {
         log.print("Received binary message from server: \(data)", for: .clientIO)
     }
     
+    /**
+     Sends the command to the server. This method returns before work is complete.
+     
+     - parameter command: The command to send
+     */
     public func send(command: Command) {
+        sendQueue.async {
+            let json = String(data: command.json(), encoding: .utf8)!
+            self.webSocket?.write(string: json)
+            self.log.print("Sent message to server: \(json)", for: .clientIO)
+        }
+    }
+    
+    /**
+     Logs an error with a custom description if the error is known.
+     
+     - parameter error: The error to log
+     */
+    private func log(error: NSError) {
         
+        func logDefault() {
+            log.print(error.localizedDescription, for: .errors)
+        }
+        
+        switch error.domain {
+        case NSPOSIXErrorDomain:
+            switch error.code {
+            case POSIXError.connectionRefused.rawValue:
+                log.print("Server Connection Refused", for: .errors)
+            default:
+                logDefault()
+            }
+        default:
+            logDefault()
+        }
+        
+    }
+    
+    private enum POSIXError: Int, Error {
+        case connectionRefused = 61
     }
     
 }

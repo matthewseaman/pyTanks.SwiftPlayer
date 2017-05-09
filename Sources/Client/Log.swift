@@ -52,12 +52,15 @@ public class Log {
      - parameter logTypes: The log types to log the message for. You should generally only specify a singular log type, as this acts as an AND (not OR) predicate.
      */
     public func print(_ message: String, for logTypes: LogTypes) {
-        serialQueue.async { [weak self] in
+        serialQueue.async {
             
-            // In case `self` has been deinitialized
-            guard self != nil else { return }
-            
-            if self!.logTypes.contains(logTypes) {
+            if self.logTypes.contains(logTypes) {
+                var message = message
+                
+                if logTypes.contains(.errors) {
+                    message = "Error: " + message
+                }
+                
                 Swift.print(message)
             }
         }
