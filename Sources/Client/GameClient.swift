@@ -40,7 +40,7 @@ public class GameClient: WebSocketDelegate {
     /// A dispatch queue for sending commands to the server. This is serial because we must be certain that commands are sent one at a time in the order they were requested.
     private let sendQueue = DispatchQueue(label: "pyTanks Client Send", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
     
-    /// A dispatch queue for receiving game states from the server. This is serial because we want to be certain we are appending states to the messageQueue in the correct order. (And messageQueue is a shared resource.)
+    /// A dispatch queue for receiving game states from the server. This is serial because we want to be certain we are appending states to the messageQueue in the correct order.
     private let receiveQueue = DispatchQueue(label: "pyTanks Client Receive", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
     
     /// A serial queue for syncronizing access to the `messageQueue` shared resource.

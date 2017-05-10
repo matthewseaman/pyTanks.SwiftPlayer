@@ -67,6 +67,11 @@ if let clientConfig = clientConfig() {
     let gameConfig = GameConfiguration()
     
     let client = GameClient(clientConfig: clientConfig, gameConfig: gameConfig)
+    let gameLoop = GameLoop(client: client)
+    
+    // This call is asynchronous and will return almost immediately.
     client.start()
-    while true {}
+    
+    // This call will hog the main thread and return once the game is over.
+    gameLoop.start()
 }
