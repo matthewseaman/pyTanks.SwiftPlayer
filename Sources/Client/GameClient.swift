@@ -29,10 +29,13 @@ public class GameClient: WebSocketDelegate {
     }
     
     /// A closure to exectute on socket connection. Will be executed on background thread.
-    public var onConnect = {}
+    internal var onConnect = {}
     
     /// A closure to exectute on socket disconnection. Will be executed on background thread.
-    public var onDisconnect = {}
+    internal var onDisconnect = {}
+    
+    /// A closure to execute the first time a message is received from the server. Will be executed from a background thread.
+    internal var onFirstReceive = {}
     
     /// A general dispatch queue for websocket callbacks. Tasks on this queue usually will simply dispatch the task to a different queue. This needs to be serial in order to maintain order.
     private let callbackQueue = DispatchQueue(label: "pyTanks Client Callback", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
@@ -122,12 +125,18 @@ public class GameClient: WebSocketDelegate {
         self.onDisconnect()
     }
     
+    private var receivedFirstMessage = false
+    
     public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
         log.print("Received message from server: \(text)", for: .clientIO)
         
         receiveQueue.async {
             let data = text.data(using: .utf8)!
             self.messageQueue.append(data)
+            if !self.receivedFirstMessage {
+                self.onFirstReceive()
+                self.receivedFirstMessage = true
+            }
         }
     }
     

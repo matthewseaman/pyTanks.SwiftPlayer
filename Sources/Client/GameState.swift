@@ -7,6 +7,16 @@
 //
 
 
+/// An object that may be translated by a given distance in its existing heading
+internal protocol Translatable {
+    /// The x coordinate, in pixels, where larger x's are further right
+    var centerX: Double { get set }
+    /// The y coordinate, in pixels, where larger y's are further down
+    var centerY: Double { get set }
+    /// The current heading, in radians
+    var heading: Double { get }
+}
+
 /**
  An instance of `GameState` stores the current state of a game, including the positions and other properties of all tanks, shells, and walls on the map.
  
@@ -49,7 +59,7 @@ public class GameState {
     }
     
     /// Encapsulates information about a tank
-    public struct Tank {
+    public struct Tank: Translatable {
         
         /// The center x coordinate for the tank on the map
         public var centerX: Double
@@ -75,7 +85,7 @@ public class GameState {
     }
     
     /// Encapsulates information about a shell. If a shell is on the map, it is moving.
-    public struct Shell {
+    public struct Shell: Translatable {
         
         /// The id of the shooting tank
         public var shooterId: Int

@@ -11,7 +11,11 @@ import Dispatch
 
 public class GameLoop {
     
+    /// The associated Game Client that manages the connection to the server and provides a message queue for reading
     private let client: GameClient
+    
+    /// The current game state object. Should remain set after the first set.
+    private var gameState: GameState!
     
     /**
      Creates a new `GameLoop` and associates it with the given `client`.
@@ -21,7 +25,8 @@ public class GameLoop {
     public init(client: GameClient) {
         self.client = client
         
-        client.onConnect = { [weak self] in
+        // Wait until we get the initial game state
+        client.onFirstReceive = { [weak self] in
             self?.state = .running
         }
         
@@ -50,6 +55,21 @@ public class GameLoop {
                 break runLoop
             }
         }
+    }
+    
+    /**
+     Moves the given item by `distance` in its current heading.
+     
+     - parameter item: The item to move
+     - parameter distance: The number of pixels to move in the current heading
+     
+     - returns: The translated object
+     */
+    private func translated<T: Translatable>(_ item: T, byDistance distance: Double) -> T {
+        var item = item
+        item.centerX += cos(item.heading) * distance
+        item.centerY -= sin(item.heading) * distance
+        return item
     }
     
     /// The current state of the game loop. This resource may be accessed from multiple threads.
