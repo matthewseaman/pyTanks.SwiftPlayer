@@ -32,11 +32,14 @@ public struct ClientConfiguration {
     /// The log to print messages to
     public var log = Log()
     
-    /// The target framerate for issuing commands
+    /// The target framerate for processing game states and responding
     public var framesPerSecond = 60
     
-    /// The time, in seconds, to wait before logging fps rate. This value is only used if FPS rate is being logged, as specified by `logLevel`. See `Log.swift`.
+    /// The time, in seconds, to wait before logging fps rate. This setting is ignored if fps logging is disabled.
     public var fpsLogRate = 5.0
+    
+    /// The maximum number of decimal places to show for FPS logs. This setting is ignored if fps logging is disabled.
+    public var fpsLogMaximumFractionDigits = 2
     
     /// The API version of the client. This value must match the server API version.
     public let apiVersion = "beta-0"

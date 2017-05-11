@@ -18,28 +18,18 @@ import Starscream
 public class GameClient: WebSocketDelegate {
     
     /// The configuration for the client server. This resource may be accessed from multiple threads.
-    public var clientConfiguration: ClientConfiguration {
+    public var configuration: ClientConfiguration {
         return memorySyncQueue.sync {
-            return _clientConfiguration
+            return _configuration
         }
     }
     
     /// The configuration for the client server
-    private let _clientConfiguration: ClientConfiguration
-    
-    /// The configuration for the game. This resource may be accessed from multiple threads.
-    public var gameConfiguration: GameConfiguration {
-        return memorySyncQueue.sync {
-            return _gameConfiguration
-        }
-    }
-    
-    /// The configuration for the game
-    private let _gameConfiguration: GameConfiguration
+    private let _configuration: ClientConfiguration
     
     /// The `Log` to write logs to
     public var log: Log {
-        return clientConfiguration.log
+        return configuration.log
     }
     
     /// A closure to exectute on socket connection. Will be executed on background thread.
@@ -61,7 +51,7 @@ public class GameClient: WebSocketDelegate {
     private let receiveQueue = DispatchQueue(label: "pyTanks Client Receive", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
     
     /// A serial queue for syncronizing access to shared resources.
-    private let memorySyncQueue = DispatchQueue(label: "pyTanks Client message queue sync", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
+    private let memorySyncQueue = DispatchQueue(label: "pyTanks Client Shared Resource Sync", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
     
     /**
      A queue of messages (in binary format) from the server. The newest message is at the end.
@@ -100,9 +90,8 @@ public class GameClient: WebSocketDelegate {
      - parameter clientConfig: The configuration for the client server
      - parameter gameConfig: The configuration for the game
      */
-    public init(clientConfig: ClientConfiguration, gameConfig: GameConfiguration) {
-        self._clientConfiguration = clientConfig
-        self._gameConfiguration = gameConfig
+    public init(configuration: ClientConfiguration) {
+        self._configuration = configuration
     }
     
     /**
@@ -112,7 +101,7 @@ public class GameClient: WebSocketDelegate {
      will take place off the main thread.
      */
     public func start() {
-        self.webSocket = WebSocket(url: clientConfiguration.socketUrl, writeQueueQOS: .userInitiated)
+        self.webSocket = WebSocket(url: configuration.socketUrl, writeQueueQOS: .userInitiated)
         webSocket?.callbackQueue = callbackQueue
         webSocket?.delegate = self
         webSocket?.connect()

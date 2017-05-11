@@ -46,10 +46,12 @@ public class Log {
     /**
      Prints a given message to standard out if `logTypes` is/are requested by the `Log`'s requested log types.
      
-     - note: This method is asynchronous and synchronized. You may call this method from multiple threads simultaneously, howeve logs will be printed one at a time in the order that they were requested.
+     - note: You should generally only specify a singular log type, as this acts as an AND (not OR) predicate.
+     
+     - note: This method is asynchronous and synchronized. You may call this method from multiple threads simultaneously, however logs will be printed one at a time in the order that they were requested.
      
      - parameter message: The message to log
-     - parameter logTypes: The log types to log the message for. You should generally only specify a singular log type, as this acts as an AND (not OR) predicate.
+     - parameter logTypes: The log types to log the message for.
      */
     public func print(_ message: String, for logTypes: LogTypes) {
         serialQueue.async {
@@ -63,6 +65,22 @@ public class Log {
                 
                 Swift.print(message)
             }
+        }
+    }
+    
+    /**
+     Runs `generateMessage` and prints the result only if `logTypes` were requested.
+     This method should be used when you don't want to do the work necessary to generate a log
+     unless the log type was requested.
+     
+     - note: You should generally only specify a singular log type, as this acts as an AND (not OR) predicate.
+     
+     - parameter logTypes: The relevant log typs
+     - parameter generateMessage: A closure that generates and returns a message to log
+     */
+    public func print(ifRequested logTypes: LogTypes, _ generateMessage: () -> String) {
+        if (serialQueue.sync { return self.logTypes }).contains(logTypes) {
+            print(generateMessage(), for: logTypes)
         }
     }
     

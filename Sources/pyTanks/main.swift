@@ -66,8 +66,8 @@ if let clientConfig = clientConfig() {
     
     let gameConfig = GameConfiguration()
     
-    let client = GameClient(clientConfig: clientConfig, gameConfig: gameConfig)
-    let gameLoop = GameLoop(client: client)
+    let client = GameClient(configuration: clientConfig)
+    let gameLoop = GameLoop(client: client, configuration: gameConfig)
     
     // This call is asynchronous and will return almost immediately.
     client.start()
