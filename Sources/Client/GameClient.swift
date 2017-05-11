@@ -17,11 +17,25 @@ import Starscream
  */
 public class GameClient: WebSocketDelegate {
     
+    /// The configuration for the client server. This resource may be accessed from multiple threads.
+    public var clientConfiguration: ClientConfiguration {
+        return memorySyncQueue.sync {
+            return _clientConfiguration
+        }
+    }
+    
     /// The configuration for the client server
-    public let clientConfiguration: ClientConfiguration
+    private let _clientConfiguration: ClientConfiguration
+    
+    /// The configuration for the game. This resource may be accessed from multiple threads.
+    public var gameConfiguration: GameConfiguration {
+        return memorySyncQueue.sync {
+            return _gameConfiguration
+        }
+    }
     
     /// The configuration for the game
-    public let gameConfiguration: GameConfiguration
+    private let _gameConfiguration: GameConfiguration
     
     /// The `Log` to write logs to
     public var log: Log {
@@ -46,8 +60,8 @@ public class GameClient: WebSocketDelegate {
     /// A dispatch queue for receiving game states from the server. This is serial because we want to be certain we are appending states to the messageQueue in the correct order.
     private let receiveQueue = DispatchQueue(label: "pyTanks Client Receive", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
     
-    /// A serial queue for syncronizing access to the `messageQueue` shared resource.
-    private let messagesSyncQueue = DispatchQueue(label: "pyTanks Client message queue sync", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
+    /// A serial queue for syncronizing access to shared resources.
+    private let memorySyncQueue = DispatchQueue(label: "pyTanks Client message queue sync", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem, target: nil)
     
     /**
      A queue of messages (in binary format) from the server. The newest message is at the end.
@@ -61,13 +75,13 @@ public class GameClient: WebSocketDelegate {
     public var messageQueue: [Data] {
         
         get {
-            return messagesSyncQueue.sync {
+            return memorySyncQueue.sync {
                 return _messageQueue
             }
         }
         
         set {
-            messagesSyncQueue.async {
+            memorySyncQueue.async {
                 self._messageQueue = newValue
             }
         }
@@ -87,8 +101,8 @@ public class GameClient: WebSocketDelegate {
      - parameter gameConfig: The configuration for the game
      */
     public init(clientConfig: ClientConfiguration, gameConfig: GameConfiguration) {
-        self.clientConfiguration = clientConfig
-        self.gameConfiguration = gameConfig
+        self._clientConfiguration = clientConfig
+        self._gameConfiguration = gameConfig
     }
     
     /**
