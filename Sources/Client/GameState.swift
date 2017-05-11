@@ -6,15 +6,31 @@
 //
 //
 
+import Foundation
 
-/// An object that may be translated by a given distance in its existing heading
-internal protocol Translatable {
+
+/// An object that may be moved by a given distance in its existing heading
+internal protocol Moveable {
     /// The x coordinate, in pixels, where larger x's are further right
     var centerX: Double { get set }
     /// The y coordinate, in pixels, where larger y's are further down
     var centerY: Double { get set }
     /// The current heading, in radians
     var heading: Double { get }
+}
+
+extension Moveable {
+    
+    /**
+     Moves `self` `distance` pixels in its current heading.
+     
+     - parameter distance: The number of pixels to move in the current heading
+     */
+    internal mutating func move(_ distance: Double) {
+        self.centerX += cos(self.heading) * distance
+        self.centerY -= sin(self.heading) * distance
+    }
+    
 }
 
 /**
@@ -59,7 +75,7 @@ public class GameState {
     }
     
     /// Encapsulates information about a tank
-    public struct Tank: Translatable {
+    public struct Tank: Moveable {
         
         /// The center x coordinate for the tank on the map
         public var centerX: Double
@@ -85,7 +101,7 @@ public class GameState {
     }
     
     /// Encapsulates information about a shell. If a shell is on the map, it is moving.
-    public struct Shell: Translatable {
+    public struct Shell: Moveable {
         
         /// The id of the shooting tank
         public var shooterId: Int

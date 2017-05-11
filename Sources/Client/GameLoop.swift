@@ -57,21 +57,6 @@ public class GameLoop {
         }
     }
     
-    /**
-     Moves the given item by `distance` in its current heading.
-     
-     - parameter item: The item to move
-     - parameter distance: The number of pixels to move in the current heading
-     
-     - returns: The translated object
-     */
-    private func translated<T: Translatable>(_ item: T, byDistance distance: Double) -> T {
-        var item = item
-        item.centerX += cos(item.heading) * distance
-        item.centerY -= sin(item.heading) * distance
-        return item
-    }
-    
     /// The current state of the game loop. This resource may be accessed from multiple threads.
     private var state: State {
         
