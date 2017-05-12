@@ -25,7 +25,7 @@ extension GameState {
      
      - throws: `JSONError` if the data is invalid JSON or does not contain a top-level dictionary
      */
-    internal convenience init(json: Data, loggingTo log: Log? = nil) throws {
+    internal init(json: Data, loggingTo log: Log? = nil) throws {
         self.init(ongoingGame: false, myTank: Tank(centerX: 0.0, centerY: 0.0, heading: 0.0, isMoving: false, isAlive: false, id: 0, canShoot: false, name: "None", info: nil, kills: 0, wins: 0), otherTanks: [:], shells: [], walls: [])
         try self.update(with: json, loggingTo: log)
     }
@@ -42,7 +42,7 @@ extension GameState {
      
      - throws: `JSONError` if the data is invalid JSON or does not contain a top-level dictionary
      */
-    internal func update(with json: Data, loggingTo log: Log? = nil) throws {
+    internal mutating func update(with json: Data, loggingTo log: Log? = nil) throws {
         // Parse
         let topLevelDict: [String : Any]
         do {

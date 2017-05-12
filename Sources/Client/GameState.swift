@@ -36,11 +36,9 @@ extension Moveable {
 /**
  An instance of `GameState` stores the current state of a game, including the positions and other properties of all tanks, shells, and walls on the map.
  
- A single instance of this class would typically be constantly updated by higher-level objects, then read and written to by others.
- 
- - note: This class makes no guarentees about thread safety. It should be synchronized by its users if it will be used from multiple threads simultaneously.
+ - note: This is a value type, so if used from multiple threads, each thread gets its own copy (not reference).
  */
-public class GameState {
+public struct GameState {
     
     /// True if a game is currently ongoing
     public var isGameOngoing: Bool
