@@ -18,6 +18,9 @@ public class GameLoop {
     /// The associated Game Client that manages the connection to the server and provides a message queue for reading
     private let client: GameClient
     
+    /// The player acting as the brain for the tank.
+    private let player: Player
+    
     /// The current game state object. Should remain set after the first set.
     private var gameState: GameState!
     
@@ -26,8 +29,9 @@ public class GameLoop {
      
      - parameter client: The game client to
      */
-    public init(client: GameClient, configuration: GameConfiguration) {
+    public init(client: GameClient, player: Player, configuration: GameConfiguration) {
         self.client = client
+        self.player = player
         self.configuration = configuration
         
         // Wait until we get the initial game state

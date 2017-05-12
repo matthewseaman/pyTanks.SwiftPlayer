@@ -8,6 +8,7 @@
 
 import Utils
 import Client
+import Players
 
 
 /// Uses the command line arguments to derive and return a client configuration
@@ -73,7 +74,7 @@ if let clientConfig = clientConfig() {
     let gameConfig = GameConfiguration()
     
     let client = GameClient(configuration: clientConfig)
-    let gameLoop = GameLoop(client: client, configuration: gameConfig)
+    let gameLoop = GameLoop(client: client, player: SimplePlayer(), configuration: gameConfig)
     
     // This call is asynchronous and will return almost immediately.
     client.start()
