@@ -68,11 +68,9 @@ public class GameLoop {
         return -lastFPSLogTime.timeIntervalSinceNow
     }
     
-    /// The number of frames processed since the last FPS log. This variable is only used for FPS logging.
-    private var frameCount = 0
-    
     /// Begins the main game loop. This method does not return until `state` is switched to `off`.
     private func beginRunLoop() {
+        client.log.print("Target: \(targetSPF) s", for: .debug)
         runLoop: while true {
             switch state {
             case .waiting:
@@ -98,25 +96,26 @@ public class GameLoop {
         makeMove()
         
         // Delay before next frame to keep target FPS
-        let frameTime = -frameStartTime.timeIntervalSinceNow
-        self.frameDeltas.append(frameTime)
-        if frameTime < targetSPF {
-            let microseconds = (targetSPF - frameTime) * 1_000_000
+        let processTime = -frameStartTime.timeIntervalSinceNow
+        client.log.print("Processing: \(processTime) s", for: .debug)
+        if processTime < targetSPF {
+            let microseconds = (targetSPF - processTime) * 1_000_000
+            client.log.print("Leftover: \(microseconds / 1_000_000) s", for: .debug)
             usleep(UInt32(microseconds))
         }
+        
+        self.frameDeltas.append(-frameStartTime.timeIntervalSinceNow)
     }
     
     /**
      Update the local game state and act upon it, possibly asking the client to send a command. Called once per frame.
      */
     private func makeMove() {
-        client.log.print("Making Move", for: .all)
+        
     }
     
     /// Logs average and minimum frames-per-second if FPS logging is requested. This function also respects the FPS log rate set in the client configuration.
     private func logFPSIfNeeded() {
-        
-        self.frameCount += 1
         
         guard frameDeltas.count > 0 else { return }
         
@@ -129,12 +128,11 @@ public class GameLoop {
             fpsFormatter.numberStyle = .none
             fpsFormatter.maximumFractionDigits = client.configuration.fpsLogMaximumFractionDigits
             
-            let avgFPS = Double(frameCount) / secondsSinceLastFPSLog
+            let avgFPS = Double(frameDeltas.count) / secondsSinceLastFPSLog
             let minFPS = 1 / frameDeltas.max()!
             
             let message = "FPS: avg=\(fpsFormatter.string(from: avgFPS as NSNumber)!), min=\(fpsFormatter.string(from: minFPS as NSNumber)!)"
             
-            self.frameCount = 0
             self.frameDeltas = []
             self.lastFPSLogTime = Date()
             

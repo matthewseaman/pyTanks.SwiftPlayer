@@ -25,6 +25,9 @@ fileprivate func clientConfig() -> ClientConfiguration? {
     // Log level may be specified
     argParser.addPossibleOption(withText: "log", description: "The level of logging to use. See README.md.", usingAbreviation: "l", argTypes: ("level", .int))
     
+    // Enable debug logs
+    argParser.addPossibleOption(withText: "debug", description: "Specify this option to enable debug logs.", usingAbreviation: "d")
+    
     // IP may be specified
     argParser.addPossibleOption(withText: "ip", description: "The pyTank server's IP address", usingAbreviation: "a", argTypes: ("address", .string))
     
@@ -50,6 +53,9 @@ fileprivate func clientConfig() -> ClientConfiguration? {
             default:
                 continue
             }
+        }
+        if options.contains(where: {$0.text == "debug"}) {
+            config.log.enableDebugMessages()
         }
         
         return config

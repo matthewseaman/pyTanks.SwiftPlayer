@@ -17,7 +17,7 @@ import Dispatch
 public class Log {
    
     /// The log types to send through standard out
-    public let logTypes: LogTypes
+    public private(set) var logTypes: LogTypes
     
     /// A serial queue to synchronize log printing
     private let serialQueue = DispatchQueue(label: "pyTanks Client Log", qos: .utility, attributes: [], autoreleaseFrequency: .workItem, target: nil)
@@ -41,6 +41,10 @@ public class Log {
      */
     public convenience init(logLevel: Int) {
         self.init(logTypes: LogTypes(logLevel: logLevel))
+    }
+    
+    public func enableDebugMessages() {
+        self.logTypes.insert(.debug)
     }
     
     /**
@@ -141,6 +145,9 @@ public class Log {
         
         /// Verbose websocket logging
         public static let websockets = LogTypes(rawValue: 1 << 6)
+        
+        /// Debugging prints
+        public static let debug = LogTypes(rawValue: 1 << 7)
         
         /// Includes `connectAndDisconnect` and `errors`
         public static let level1: LogTypes = [
