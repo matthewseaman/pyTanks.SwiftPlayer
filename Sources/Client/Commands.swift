@@ -22,4 +22,7 @@ public enum Command {
     /// Tells the tank to fire in the direction specified as radians from the positive x axis. The server may restrict shooting in certain situations.
     case fire(heading: Double)
     
+    /// Sets an info string on the tank. You would typically do this on connection.
+    case setInfo(String)
+    
 }

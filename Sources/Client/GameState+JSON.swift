@@ -26,7 +26,7 @@ extension GameState {
      - throws: `JSONError` if the data is invalid JSON or does not contain a top-level dictionary
      */
     internal convenience init(json: Data, loggingTo log: Log? = nil) throws {
-        self.init(ongoingGame: false, myTank: Tank(centerX: 0.0, centerY: 0.0, heading: 0.0, isMoving: false, isAlive: false, canShoot: false, name: "None"), otherTanks: [], shells: [], walls: [])
+        self.init(ongoingGame: false, myTank: Tank(centerX: 0.0, centerY: 0.0, heading: 0.0, isMoving: false, isAlive: false, id: 0, canShoot: false, name: "None", info: nil, kills: 0, wins: 0), otherTanks: [:], shells: [], walls: [])
         try self.update(with: json, loggingTo: log)
     }
     
@@ -126,11 +126,39 @@ extension GameState {
                 logMissing(keyPath: "\(JSONKey.myTank) > \(JSONKey.isAlive)")
             }
             
+            // id
+            if let id = tankDict["\(JSONKey.id)"] as? Int {
+                self.myTank.id = id
+            } else {
+                logMissing(keyPath: "\(JSONKey.myTank) > \(JSONKey.id)")
+            }
+            
             // name
             if let name = tankDict["\(JSONKey.name)"] as? String {
                 self.myTank.name = name
             } else {
                 logMissing(keyPath: "\(JSONKey.myTank) > \(JSONKey.name)")
+            }
+            
+            // info
+            if let info = tankDict["\(JSONKey.info)"] as? String {
+                self.myTank.info = info
+            } else {
+                logMissing(keyPath: "\(JSONKey.myTank) > \(JSONKey.info)")
+            }
+            
+            // kills
+            if let kills = tankDict["\(JSONKey.kills)"] as? Int {
+                self.myTank.kills = kills
+            } else {
+                logMissing(keyPath: "\(JSONKey.myTank) > \(JSONKey.kills)")
+            }
+            
+            // wins
+            if let wins = tankDict["\(JSONKey.wins)"] as? Int {
+                self.myTank.wins = wins
+            } else {
+                logMissing(keyPath: "\(JSONKey.myTank) > \(JSONKey.info)")
             }
             
             // canShoot
@@ -147,11 +175,11 @@ extension GameState {
         // otherTanks
         if let tanksList = topLevelDict["\(JSONKey.otherTanks)"] as? [[String : Any]] {
             
-            self.otherTanks = []
+            self.otherTanks = [:]
             
             for tankDict in tanksList {
                 
-                var tank = Tank(centerX: 0.0, centerY: 0.0, heading: 0.0, isMoving: false, isAlive: false, canShoot: nil, name: nil)
+                var tank = Tank(centerX: 0.0, centerY: 0.0, heading: 0.0, isMoving: false, isAlive: false, id: 0, canShoot: nil, name: nil, info: nil, kills: nil, wins: nil)
                 
                 // x
                 let tankXKeyPath = "\(JSONKey.otherTanks) > \(JSONKey.x)"
@@ -194,7 +222,14 @@ extension GameState {
                     logMissing(keyPath: "\(JSONKey.otherTanks) > \(JSONKey.isAlive)")
                 }
                 
-                self.otherTanks.append(tank)
+                // id
+                if let id = tankDict["\(JSONKey.id)"] as? Int {
+                    tank.id = id
+                } else {
+                    logMissing(keyPath: "\(JSONKey.otherTanks) > \(JSONKey.id)")
+                }
+                
+                self.otherTanks[tank.id] = tank
             }
             
         } else {
@@ -325,8 +360,16 @@ extension GameState {
         case isMoving = "moving"
         /// Nested inside `myTank` and `tanks`
         case isAlive = "alive"
+        /// Nested inside `myTank` and `tanks`
+        case id = "id"
         /// Nested inside `myTank`
         case name = "name"
+        /// Nested inside `myTank`
+        case info = "info"
+        /// Nested inside `myTank`
+        case kills = "kills"
+        /// Nested inside `myTank`
+        case wins = "wins"
         /// Nested inside `myTank`
         case canShoot = "canShoot"
         /// Nested inside each item in `shells`

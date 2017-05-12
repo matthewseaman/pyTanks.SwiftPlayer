@@ -117,7 +117,6 @@ public class GameLoop {
         
         client.log.print(ifRequested: .fps) {
             
-            
             let fpsFormatter = NumberFormatter()
             fpsFormatter.numberStyle = .none
             fpsFormatter.maximumFractionDigits = client.configuration.fpsLogMaximumFractionDigits

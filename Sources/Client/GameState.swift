@@ -48,8 +48,8 @@ public class GameState {
     /// The Player's tank
     public var myTank: Tank
     
-    /// The other tanks on the field
-    public var otherTanks: [Tank]
+    /// The other tanks on the field, by id
+    public var otherTanks: [Int: Tank]
     
     /// All shells currently on the map. Shells are assumed to be moving if they are on the map.
     public var shells: [Shell]
@@ -66,7 +66,7 @@ public class GameState {
      - parameter shells: All shells currently on the map
      - parameter walls: All walls on the map for this match
      */
-    internal init(ongoingGame: Bool, myTank: Tank, otherTanks: [Tank], shells: [Shell], walls: [Wall]) {
+    internal init(ongoingGame: Bool, myTank: Tank, otherTanks: [Int: Tank], shells: [Shell], walls: [Wall]) {
         self.isGameOngoing = ongoingGame
         self.myTank = myTank
         self.otherTanks = otherTanks
@@ -92,11 +92,23 @@ public class GameState {
         /// True iff the tank is still alive
         public var isAlive: Bool
         
+        /// The unique id of the tank. These values are not guarenteed to persist across connections.
+        public var id: Int
+        
         /// True iff the tank can shoot. `nil` if this is someone else's tank
         public var canShoot: Bool!
         
         /// The name of the tank. `nil` if this is someone else's tank
         public var name: String!
+        
+        /// A player-set info string for the tank. `nil` if this is someone else's tank
+        public var info: String!
+        
+        /// The number of kills in the current round. `nil` if this is someone else's tank
+        public var kills: Int!
+        
+        /// The number of rounds won. `nil` if this is someone else's tank
+        public var wins: Int!
         
     }
     

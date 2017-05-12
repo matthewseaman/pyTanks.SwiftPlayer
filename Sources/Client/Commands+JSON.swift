@@ -28,13 +28,15 @@ extension Command {
             return json(withAction: .turn, arg: heading, pretty: readable)
         case .fire(let heading):
             return json(withAction: .fire, arg: heading, pretty: readable)
+        case .setInfo(let info):
+            return json(withAction: .setInfo, arg: info, pretty: readable)
         }
     }
     
     /**
      Converts the given command text and floating-point argument to JSON data.
      */
-    private func json(withAction action: Action, arg: Double?, pretty: Bool = false) -> Data {
+    private func json(withAction action: Action, arg: Any?, pretty: Bool = false) -> Data {
         var dict = [String : Any]()
         dict["\(JSONKey.action)"] = "\(action)"
         if let arg = arg {
@@ -59,6 +61,7 @@ extension Command {
         case stop = "Command_Stop"
         case turn = "Command_Turn"
         case fire = "Command_Fire"
+        case setInfo = "Command_Info"
         
         var description: String {
             return rawValue

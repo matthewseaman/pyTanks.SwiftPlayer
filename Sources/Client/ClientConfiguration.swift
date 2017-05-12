@@ -42,7 +42,7 @@ public struct ClientConfiguration {
     public var fpsLogMaximumFractionDigits = 2
     
     /// The API version of the client. This value must match the server API version.
-    public let apiVersion = "beta-0"
+    public let apiVersion = "beta-2"
     
     /// The player API path to connect to the server on
     public var apiPath: String {
