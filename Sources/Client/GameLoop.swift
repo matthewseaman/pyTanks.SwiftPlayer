@@ -95,14 +95,8 @@ public class GameLoop {
         
         makeMove()
         
-        // Delay before next frame to keep target FPS
-        let processTime = -frameStartTime.timeIntervalSinceNow
-        client.log.print("Processing: \(processTime) s", for: .debug)
-        if processTime < targetSPF {
-            let microseconds = (targetSPF - processTime) * 1_000_000
-            client.log.print("Leftover: \(microseconds / 1_000_000) s", for: .debug)
-            usleep(UInt32(microseconds))
-        }
+        // Delay before next frame to keep target FPS.
+        while -frameStartTime.timeIntervalSinceNow < targetSPF {} // usleep and nanosleep have too much latency
         
         self.frameDeltas.append(-frameStartTime.timeIntervalSinceNow)
     }
