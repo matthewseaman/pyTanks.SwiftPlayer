@@ -5,7 +5,8 @@ import PackageDescription
 let package = Package(
     name: "pyTanks.SwiftPlayer",
     targets: [
-        Target(name: "pyTanks", dependencies: ["Client", "Utils"]),
+        Target(name: "pyTanks", dependencies: ["Players", "Client", "Utils"]),
+        Target(name: "Players", dependencies: ["Client"]),
         Target(name: "Client"),
         Target(name: "Utils")
     ],
