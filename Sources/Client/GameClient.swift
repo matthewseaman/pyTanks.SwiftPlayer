@@ -56,7 +56,7 @@ public class GameClient: WebSocketDelegate {
     /**
      A queue of messages (in binary format) from the server. The newest message is at the end.
      
-     Messages may represent JSON or
+     Messages may represent JSON or error messages. Both are encoded as UTF-8.
      
      Messages are pushed onto the end by the `GameClient` and popped off the front by the `GameLoop`.
      

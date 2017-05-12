@@ -27,7 +27,7 @@ internal enum JSONError: Error, CustomStringConvertible {
         case .missing(let keyPath):
             return "The received JSON is missing \"\(keyPath)\"."
         case .invalid(let keyPath, let value):
-            return "The received JSON contained \(value), an invlalid value for \(keyPath)."
+            return "The received JSON contained \(value), an invalid value for \"\(keyPath)\"."
         }
     }
 }

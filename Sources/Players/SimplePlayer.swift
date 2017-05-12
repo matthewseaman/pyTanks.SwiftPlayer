@@ -11,6 +11,10 @@ import Client
 
 public struct SimplePlayer: Player {
     
+    public var playerDescription: String? {
+        return "Swift client using the simple player."
+    }
+    
     public init() {}
     
     public func connectedToServer() {
@@ -29,7 +33,7 @@ public struct SimplePlayer: Player {
         
     }
     
-    public func roundOver(withResult roundResult: RoundResult) {
+    public func roundOver() {
         
     }
     

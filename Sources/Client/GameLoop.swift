@@ -22,7 +22,15 @@ public class GameLoop {
     private let player: Player
     
     /// The current game state object. Should remain set after the first set.
-    private var gameState: GameState!
+    private var gameState: GameState! {
+        
+        didSet {
+            if oldValue == nil {
+                initialGameStateReceived()
+            }
+        }
+        
+    }
     
     /**
      Creates a new `GameLoop` and associates it with the given `client`.
@@ -61,7 +69,7 @@ public class GameLoop {
         return 1 / targetFPS
     }
     
-    /// The most recent time gaps between frames. This is used only for logging.
+    /// The most recent frame time lengths. This is used only for logging.
     private var frameDeltas = [Double]()
     
     /// The last time a frames-per-second rate was logged. `nil` if this has not taken place. This variable is only maintained if FPS logging is enabled.
@@ -105,11 +113,104 @@ public class GameLoop {
         self.frameDeltas.append(-frameStartTime.timeIntervalSinceNow)
     }
     
+    /// The exact time that the `makeMove()` function last guarenteed `self.gameState` to be valid.
+    private var lastMoveTime: Date? = nil
+    
     /**
      Update the local game state and act upon it, possibly asking the client to send a command. Called once per frame.
      */
     private func makeMove() {
         
+        let previousState = self.gameState
+        
+        if let newState = popNextGameState() {
+            // There was a fresh game state waiting for us in the client's message queue
+            self.gameState = newState
+            self.lastMoveTime = Date()
+        } else if let lastMoveTime = self.lastMoveTime, self.gameState != nil {
+            // We should extrapolate a new state based on the previous one
+            let timeDelta = -lastMoveTime.timeIntervalSinceNow
+            
+            // Move tanks
+            let tankDistance = configuration.tank.speed * timeDelta
+            if gameState.myTank.isMoving {
+                gameState.myTank.move(tankDistance)
+            }
+            for (id, tank) in gameState.otherTanks where tank.isMoving {
+                gameState.otherTanks[id]!.move(tankDistance)
+            }
+            
+            // Move shells
+            let shellDistance = configuration.shell.speed * timeDelta
+            for i in 0..<gameState.shells.count {
+                gameState.shells[i].move(shellDistance)
+            }
+            self.lastMoveTime = Date()
+        }
+        
+        guard self.gameState != nil else { return }
+        
+        // Notify if round is starting for this tank
+        if gameState.isGameOngoing && !(previousState?.isGameOngoing ?? false) {
+            client.log.print("Round Starting", for: .gameEvents)
+            player.roundStarting(withGameState: gameState)
+        }
+        
+        // Notify of tank death
+        if !gameState.myTank.isAlive && (previousState?.myTank.isAlive ?? false) {
+            client.log.print("Tank Killed", for: .gameEvents)
+            player.tankKilled()
+        }
+        
+        // Notify of round end
+        if !gameState.isGameOngoing && (previousState?.isGameOngoing ?? false) {
+            client.log.print("Round Ended", for: .gameEvents)
+            player.roundOver()
+        }
+        
+        // Make move if needed
+        if gameState.isGameOngoing && gameState.myTank.isAlive {
+            if let command = player.makeMove(withGameState: gameState) {
+                client.send(command: command)
+            }
+        }
+    }
+    
+    /**
+     Pops the oldest message from the client's message queue and returns a cooresponding `GameState`. If the message represents an error instead of a game state, the error will be logged and the next item in the queue will be popped and returned.
+     
+     - returns: The oldest `GameState` represented in the client's message queue, or `nil` if there are none.
+     */
+    private func popNextGameState() -> GameState? {
+        
+        while client.messageQueue.count > 0 {
+            
+            let message = client.messageQueue.removeFirst()
+            
+            do {
+                return try GameState(json: message, loggingTo: client.log)
+            } catch {
+                // This is just an error to print out
+                let text = String(data: message, encoding: .utf8)!
+                client.log.print(text, for: .errors)
+            }
+        }
+        
+        return nil
+    }
+    
+    /**
+     Should be called when `self.gameState` is set for the first time.
+     */
+    private func initialGameStateReceived() {
+        client.log.print("Received command of the \(gameState.myTank.name!)", for: .connectAndDisconnect)
+        
+        if let info = player.playerDescription {
+            let command = Command.setInfo(info)
+            client.send(command: command)
+        }
+        
+        player.connectedToServer()
     }
     
     /// Logs average and minimum frames-per-second if FPS logging is requested. This function also respects the FPS log rate set in the client configuration.

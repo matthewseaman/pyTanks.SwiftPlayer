@@ -13,6 +13,9 @@
  */
 public protocol Player {
     
+    /// A description of the player to be sent to the server as an info string
+    var playerDescription: String? { get }
+    
     /**
      Called when the player is first connected to the server.
      This is your opportunity to do per-session (not per-round) setup work such as setting an info string.
@@ -22,7 +25,7 @@ public protocol Player {
     func connectedToServer()
     
     /**
-     Called at the beginning of each round.
+     Called at the beginning of each round. This may also be called in the middle of a round if a player joins in the middle of an existing round.
      This is your opportunity to do any per-round setup work.
      
      - parameter gameState: The initial game state
@@ -43,7 +46,7 @@ public protocol Player {
     
     /**
      Called when the player's tank is killed.
-     This is your opportunity to do any learning for the next match.
+     This is your opportunity to do any learning for the next round. Perhaps try to avoid that mistake again.
      You can also clean things up here, because if your tank is killed the round is effectively over for you.
      */
     func tankKilled()
@@ -51,17 +54,7 @@ public protocol Player {
     /**
      Called when a round is over.
      This is your opportunity to do any clean-up before setting up for the next round.
-     
-     - parameter roundResult: Whether the player won or lost
      */
-    func roundOver(withResult roundResult: RoundResult)
+    func roundOver()
     
-}
-
-/// The result of a game round
-public enum RoundResult {
-    /// Your tank won the round
-    case won
-    /// Your tank lost the round
-    case lost
 }
