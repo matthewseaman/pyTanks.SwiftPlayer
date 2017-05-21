@@ -19,7 +19,7 @@ public class GameLoop {
     private let client: GameClient
     
     /// The player acting as the brain for the tank.
-    private let player: Player
+    private var player: Player
     
     /// The current game state object. Should remain set after the first set.
     private var gameState: GameState! {
@@ -41,6 +41,7 @@ public class GameLoop {
         self.client = client
         self.player = player
         self.configuration = configuration
+        self.player.log = client.log
         
         // Wait until we get the initial game state
         client.onFirstReceive = { [weak self] in
@@ -82,7 +83,6 @@ public class GameLoop {
     
     /// Begins the main game loop. This method does not return until `state` is switched to `off`.
     private func beginRunLoop() {
-        client.log.print("Target: \(targetSPF) s", for: .debug)
         runLoop: while true {
             switch state {
             case .waiting:
@@ -170,7 +170,7 @@ public class GameLoop {
         
         // Make move if needed
         if gameState.isGameOngoing && gameState.myTank.isAlive {
-            if let command = player.makeMove(withGameState: gameState) {
+            for command in player.makeMove(withGameState: gameState) {
                 client.send(command: command)
             }
         }

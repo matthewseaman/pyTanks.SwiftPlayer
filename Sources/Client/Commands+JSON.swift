@@ -6,9 +6,7 @@
 //
 //
 
-#if SWIFT_PACKAGE
 import Foundation
-#endif
 
 
 extension Command {

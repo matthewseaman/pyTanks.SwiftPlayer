@@ -16,13 +16,16 @@ public protocol Player {
     /// A description of the player to be sent to the server as an info string
     var playerDescription: String? { get }
     
+    /// A log to write messages to. Set by the `GameLoop` during its initialization.
+    var log: Log! { get set }
+    
     /**
      Called when the player is first connected to the server.
      This is your opportunity to do per-session (not per-round) setup work such as setting an info string.
      
      If called, this function will always be called before `roundStarting()`.
      */
-    func connectedToServer()
+    mutating func connectedToServer()
     
     /**
      Called at the beginning of each round. This may also be called in the middle of a round if a player joins in the middle of an existing round.
@@ -30,7 +33,7 @@ public protocol Player {
      
      - parameter gameState: The initial game state
      */
-    func roundStarting(withGameState gameState: GameState)
+    mutating func roundStarting(withGameState gameState: GameState)
     
     /**
      Called each frame.
@@ -40,21 +43,21 @@ public protocol Player {
      
      - parameter gameState: The updated game state
      
-     - returns: An optional command for the tank to execute
+     - returns: An optional list of commands for the tank to execute in order
      */
-    func makeMove(withGameState gameState: GameState) -> Command?
+    mutating func makeMove(withGameState gameState: GameState) -> [Command]
     
     /**
      Called when the player's tank is killed.
      This is your opportunity to do any learning for the next round. Perhaps try to avoid that mistake again.
      You can also clean things up here, because if your tank is killed the round is effectively over for you.
      */
-    func tankKilled()
+    mutating func tankKilled()
     
     /**
      Called when a round is over.
      This is your opportunity to do any clean-up before setting up for the next round.
      */
-    func roundOver()
+    mutating func roundOver()
     
 }
