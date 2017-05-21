@@ -15,7 +15,7 @@ public struct SimplePlayer: Player {
     public var log: Log!
     
     public var playerDescription: String? {
-        return "Swift client using the SimplePlayer."
+        return "Swift client using the example SimplePlayer."
     }
     
     /// The random source responsible for generating random behaviors
@@ -62,13 +62,16 @@ public struct SimplePlayer: Player {
             
             // Only shoot if alive
             if target.isAlive {
-                let deltaX = target.centerX - gameState.myTank.centerX
+                let deltaX = abs(target.centerX - gameState.myTank.centerX)
                 let deltaY = gameState.myTank.centerY - target.centerY
-                let angle: Double
+                var angle: Double
                 if deltaX == 0 {
                     angle = deltaY >= 0 ? .pi / 2 : 3 * .pi / 2
                 } else {
                     angle = atan(deltaY / deltaX)
+                    if target.centerX < gameState.myTank.centerX {
+                        angle = .pi - angle
+                    }
                 }
                 let fire = Command.fire(heading: angle)
                 commands.append(fire)
