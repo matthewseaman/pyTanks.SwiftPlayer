@@ -10,6 +10,9 @@ import Client
 import GameplayKit
 
 
+/**
+ `SimplePlayer` keeps moving, turning a new random direction each time it encounters an obstacle. It also shoots as fast as possible, selecting a random tank each time. If the selected tank is not alive, it avoids shooting that turn.
+ */
 public struct SimplePlayer: Player {
     
     public var log: Log!
