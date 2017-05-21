@@ -62,13 +62,17 @@ public struct SimplePlayer: Player {
             
             // Only shoot if alive
             if target.isAlive {
-                let deltaX = gameState.myTank.centerX - target.centerX
-                if deltaX != 0 {
-                    let deltaY = gameState.myTank.centerY - target.centerY
-                    let angle = atan(deltaY / deltaX)
-                    
-                    
+                let deltaX = target.centerX - gameState.myTank.centerX
+                let deltaY = gameState.myTank.centerY - target.centerY
+                let angle: Double
+                if deltaX == 0 {
+                    angle = deltaY >= 0 ? .pi / 2 : 3 * .pi / 2
+                } else {
+                    angle = atan(deltaY / deltaX)
                 }
+                let fire = Command.fire(heading: angle)
+                commands.append(fire)
+                log.print("Fired", for: .gameEvents)
             }
         }
         

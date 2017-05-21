@@ -171,9 +171,35 @@ public class GameLoop {
         // Make move if needed
         if gameState.isGameOngoing && gameState.myTank.isAlive {
             for command in player.makeMove(withGameState: gameState) {
-                client.send(command: command)
+                if updateGameState(for: command) {
+                    client.send(command: command)
+                }
             }
         }
+    }
+    
+    /**
+     Updates `gameState` based on the passed `command`. This is necessary because we only receive updates from the server every 10th of a second.
+     
+     - parameter command: The command to base the game state update on
+     
+     - returns: `true` iff it is safe to proceed with sending the command to the server
+     */
+    private func updateGameState(for command: Command) -> Bool {
+        switch command {
+        case .setInfo(let info):
+            gameState.myTank.info = info
+        case .go:
+            gameState.myTank.isMoving = true
+        case .stop:
+            gameState.myTank.isMoving = false
+        case .turn(let heading):
+            gameState.myTank.heading = heading
+        case .fire:
+            guard gameState.myTank.canShoot else { return false }
+            gameState.myTank.canShoot = false
+        }
+        return true
     }
     
     /**
@@ -208,6 +234,7 @@ public class GameLoop {
         if let info = player.playerDescription {
             let command = Command.setInfo(info)
             client.send(command: command)
+            gameState.myTank.info = info
         }
         
         player.connectedToServer()
