@@ -49,6 +49,9 @@ The main client configuration options are specified in the `ClientConfiguration`
 
 The default player is `SimplePlayer`, which simply travels in random directions and attempts shooting at enemy tanks without considering walls.
 
+### Working in Xcode ###
+To work on a fork in Xcode, run `swift package generate-xcodeproj` from the command line while inside the working directory. After opening the file, be sure to change the project target to macOS 10.12 instead of 10.10. This allows it to be built, run, and debugged inside Xcode.
+
 ## Create Your Own Tank AI ##
 The pyTanks Swift Player is designed to allow the creation of many different `Player` AIs in the same project. The `main.swift` script inside the "pyTanks" target then initializes a specific `Player` and passes it to the game loop to act as the tank's brain. In this way, many different `Player` objects may be created, but only one may be used at a time.
 
