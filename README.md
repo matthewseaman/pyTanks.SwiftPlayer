@@ -17,7 +17,7 @@ The existing pyTanks.Player expects clients to be written in Python, however, al
 
 ### Requirements ###
 - macOS 10.12 Sierra or later
-- Swift 3.1
+- Swift 3.1 or later
 - Swift Package Manager
 
 All library dependencies will automatically be collected upon compilation with Swift Package Manager.
@@ -51,3 +51,12 @@ The default player is `SimplePlayer`, which simply travels in random directions 
 
 ## Create Your Own Tank AI ##
 The pyTanks Swift Player is designed to allow the creation of many different `Player` AIs in the same project. The `main.swift` script inside the "pyTanks" target then initializes a specific `Player` and passes it to the game loop to act as the tank's brain. In this way, many different `Player` objects may be created, but only one may be used at a time.
+
+To create a new AI:
+- Conform an object to the `Player` protocol.
+- In `pyTanks/main.swift`, ensure the `player` constant is set to the `Player` instance you want.
+
+Any object that conforms to the `Player` protocol acts as the brain for a tank. You can either create your own object to conform to this protocol or conform an existing one. The `Player` protocol has the following requirements:
+- `var playerDescription: String?` - This variable must provide `get` access to an optional textual description of the AI. This will be displayed in the pyTanks Viewer when a user clicks on the associated tank name.
+- `var log: Log!` - This variable must provide `set` access so that that the game loop can set the appropriate `Log` object on your player. This `Log` object may be used to print log messages in a synchronized and logLevel-aware fashion.
+- `func connectedToServer()` - A possibly-mutating function that will be called as soon as the first connection to the server is made. Do any setup work here that is not dependent on the current round. You can also put setup work in an `init` method if you do not wish to wait until a connection has been made.
