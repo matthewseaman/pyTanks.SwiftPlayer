@@ -60,3 +60,24 @@ Any object that conforms to the `Player` protocol acts as the brain for a tank. 
 - `var playerDescription: String?` - This variable must provide `get` access to an optional textual description of the AI. This will be displayed in the pyTanks Viewer when a user clicks on the associated tank name.
 - `var log: Log!` - This variable must provide `set` access so that that the game loop can set the appropriate `Log` object on your player. This `Log` object may be used to print log messages in a synchronized and logLevel-aware fashion.
 - `func connectedToServer()` - A possibly-mutating function that will be called as soon as the first connection to the server is made. Do any setup work here that is not dependent on the current round. You can also put setup work in an `init` method if you do not wish to wait until a connection has been made.
+- `func roundStarting(withGameState:)` - Called when a round is starting.
+- `func makeMove(withGameState:)` - Called each frame during a round. Must return an array of commands for the tank. This array may be empty. For the first, move in a round, this will be called with the same `GameState` object as `roundStarting(withGameState:)`
+- `func tankKilled()` - Called when a tank is killed, regardless of whether it results in the end of a round or not.
+- `func roundOver()` - Called when a round is over, even if `tankKilled()` was just called.
+
+The sequence of calls on the `Player` is as follows:
+1. `log` is set to a `Log` object before attempting to connect to the server.
+2. After a server connection is made, `playerDescription` is accessed and a new info string is sent to the server for the AI.
+3. connectedToServer() is called
+4. roundStarting(withGameState:)
+5. makeMove(withGameState:) each frame
+6. tankKilled() only if the tank was killed
+7. roundOver() regardless of who won
+8. repeat steps 4–7 until termination
+
+Inside the `makeMove(withGameState:)` function, you return a list of commands for the tank. Commands are defined in the `Command` enum. Valid commands include `go`, `stop`, `turn`, and `fire`. See the documentation in `Commands.swift`.
+
+A few things to keep in mind:
+- Your tank will die after 1 hit.
+- Your tank will automatically stop if it collides with something, but you can always tell it to "go" again.
+- Headings are always in radians with 0 being in the direction of the positive x axis.
