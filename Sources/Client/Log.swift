@@ -114,8 +114,6 @@ public class Log {
                 self = .level3
             case 4:
                 self = .level4
-            case 5:
-                self = .level5
             default:
                 // logLevel is greater than 5
                 self = .all
@@ -143,11 +141,8 @@ public class Log {
         /// Details about input and output when communicating with the server. (i.e. sending commands and receiving game states)
         public static let clientIO = LogTypes(rawValue: 1 << 5)
         
-        /// Verbose websocket logging
-        public static let websockets = LogTypes(rawValue: 1 << 6)
-        
         /// Debugging prints
-        public static let debug = LogTypes(rawValue: 1 << 7)
+        public static let debug = LogTypes(rawValue: 1 << 6)
         
         /// Includes `connectAndDisconnect` and `errors`
         public static let level1: LogTypes = [
@@ -174,14 +169,8 @@ public class Log {
             .clientIO
         ]
         
-        /// Inlcludes everything in level 4 plus `websockets`. This level currently covers all logs.
-        public static let level5: LogTypes = [
-            .level4,
-            .websockets
-        ]
-        
         /// Includes all logs. Currently equivilant to `level5`.
-        public static let all = level5
+        public static let all = level4
         
     }
     
