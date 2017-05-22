@@ -86,6 +86,8 @@ A few things to keep in mind:
 At the beginning of each round, and each frame, you are sent a `GameState` object representing the state of the board at a point in time. This gives you access to information about your own tank (`.myTank`), enemy tanks (`otherTanks`), currently flying shells (`shells`), and board walls (`walls`). Note that `otherTanks` are stored in a `Dictionary` with a tank's unique ID as its key. IDs are not guarenteed to be persisted between runs. See the documentation in `GameState.swift` for all the available properties of `GameState`.
 
 ## Custom Logging ##
+In your AI, you can log at anytime using the `Log` object set on your `Player`'s `log` property. Simply call `print(_:for:)` to print a message conditional on a specific log type being requested. You may pass `.debug` as the log type to treat it as a debug message that should only be printed if `--debug` was specified on the command line.
+
 In your own fork, you may also easily modify which log levels are associated with which log types. Inside the `Log` class (`Client/Log.swift`) is the `LogTypes` struct. This struct conforms to `OptionSet` and simply acts as a bitmask of log types. You can change which types are associated with which levels by modifying lines such as those below:
 ```swift
 /// Includes everything in level 1 plus `gameEvents` and `aiLogic`
