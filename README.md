@@ -40,7 +40,7 @@ The main client configuration options are specified in the `ClientConfiguration`
 - `--log logLevel`, where *logLevel* cooresponds to one of the following:
   - 0 - Don't log anything
   - 1 - Connects, disconnects, and errors
-  - 2 - Level 1, plus game events and AI logic
+  - 2 - Level 1, plus game events and AI logic
   - 3 - Level 2, plus FPS
   - 4 - Level 3, plus Client IO (every incoming and outgoing message)
 - `--debug` turns on debug message logging
