@@ -9,7 +9,7 @@ pyTanks is a battlefield for Python tank AIs to fight.
 * [The Python Server](https://github.com/JoelEager/pyTanks.Server) manages the game and communicates with tank clients about game state.
 * [The JavaScript/HTML Viewer](https://github.com/JoelEager/pyTanks.Viewer) manages the display of the battlefield and the scoreboard.
 * Tank Player Clients manage and run Tank AIs, communicating with the server by sending and receiving JSON via web sockets.
-  - Python Player - Works on any OS with Python 3
+  - [Python Player](https://github.com/JoelEager/pyTanks.Player) - Works on any OS with Python 3
   - Swift Player - Works on macOS Sierra with Swift 3.1 and Swift Package Manager
 
 ### Where does Swift come in? ###
@@ -23,3 +23,8 @@ The existing pyTanks.Player expects clients to be written in Python, however, al
 All library dependencies will automatically be collected upon compilation with Swift Package Manager.
 
 **Note: pyTanks is still in beta. API and functionality is subject to change.**
+
+## Usage ##
+To run the player, `cd` to the working directory, then run `source start.sh`. This executable simply calls `build_executable.sh`, then runs the newly-built executable `.build/debug/pyTanks`.
+
+Settings are customizable on the command line, but only when passed as arguments to the raw executable rather than using `start.sh` (which does not acknowledge passed arguments).
