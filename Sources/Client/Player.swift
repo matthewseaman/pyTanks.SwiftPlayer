@@ -19,6 +19,9 @@ public protocol Player {
     /// A log to write messages to. Set by the `GameLoop` during its initialization.
     var log: Log! { get set }
     
+    /// A game configuration set by the `GameLoop` during its initialization.
+    var gameConfig: GameConfiguration! { get set }
+    
     /**
      Called when the player is first connected to the server.
      This is your opportunity to do per-session (not per-round) setup work such as setting an info string.

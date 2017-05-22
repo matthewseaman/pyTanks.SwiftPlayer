@@ -42,6 +42,7 @@ public class GameLoop {
         self.player = player
         self.configuration = configuration
         self.player.log = client.log
+        self.player.gameConfig = configuration
         
         // Wait until we get the initial game state
         client.onFirstReceive = { [weak self] in

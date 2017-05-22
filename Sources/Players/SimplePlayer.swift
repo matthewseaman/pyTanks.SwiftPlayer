@@ -17,6 +17,8 @@ public struct SimplePlayer: Player {
     
     public var log: Log!
     
+    public var gameConfig: GameConfiguration!
+    
     public var playerDescription: String? {
         return "Swift client using the example SimplePlayer."
     }
