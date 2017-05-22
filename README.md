@@ -24,7 +24,30 @@ All library dependencies will automatically be collected upon compilation with S
 
 **Note: pyTanks is still in beta. API and functionality is subject to change.**
 
-## Usage ##
-To run the player, `cd` to the working directory, then run `source start.sh`. This executable simply calls `build_executable.sh`, then runs the newly-built executable `.build/debug/pyTanks`.
+## Basic Structure ##
+This project contains several targets, which you may think of as submodules:
+- Utils - Provides generic functionality, such as a command line argument parser
+- Client - Manages the main game loop and the background connection to the server
+- Player - Holds tank AIs that may be chosen.
+- pyTanks - The main executable which applies command line arguments, creates a `Player`, and sets the game loop running.
 
-Settings are customizable on the command line, but only when passed as arguments to the raw executable rather than using `start.sh` (which does not acknowledge passed arguments).
+## Usage ##
+To compile the player, `cd` to the working directory, then run `source build_executable.sh`. This will place an executable program called `pyTanks` inside `.build/debug/`. It will also place a copy called `start` in the top-level directory.
+
+To run the previously-compiled executable, run `./start` from the top-level directory.
+
+The main client configuration options are specified in the `ClientConfiguration` struct. You may change them directly in your own fork, but a few are customizable on the command line by default:
+- `--log logLevel`, where *logLevel* cooresponds to one of the following:
+  - 0 - Don't log anything
+  - 1 - Connects, disconnects, and errors
+  - 2 - Level 1, plus game events and AI logic
+  - 3 - Level 2, plus FPS
+  - 4 - Level 3, plus Client IO (every incoming and outgoing message)
+- `--debug` turns on debug message logging
+- `--ip address`, where *address* is the IP address of the pyTanks server you wish to connect to
+- `--port p`, where *p* is the port on the pyTanks server you wish to connect to
+
+The default player is `SimplePlayer`, which simply travels in random directions and attempts shooting at enemy tanks without considering walls.
+
+## Create Your Own Tank AI ##
+The pyTanks Swift Player is designed to allow the creation of many different `Player` AIs in the same project. The `main.swift` script inside the "pyTanks" target then initializes a specific `Player` and passes it to the game loop to act as the tank's brain. In this way, many different `Player` objects may be created, but only one may be used at a time.
