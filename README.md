@@ -75,9 +75,23 @@ The sequence of calls on the `Player` is as follows:
 7. roundOver() regardless of who won
 8. repeat steps 4–7 until termination
 
-Inside the `makeMove(withGameState:)` function, you return a list of commands for the tank. Commands are defined in the `Command` enum. Valid commands include `go`, `stop`, `turn`, and `fire`. See the documentation in `Commands.swift`.
+Inside the `makeMove(withGameState:)` function, you return a list of commands for the tank. Commands are defined in the `Command` enum. Valid commands include `go`, `stop`, `turn`, and `fire`. See the documentation in `Client/Commands.swift`.
 
 A few things to keep in mind:
 - Your tank will die after 1 hit.
 - Your tank will automatically stop if it collides with something, but you can always tell it to "go" again.
 - Headings are always in radians with 0 being in the direction of the positive x axis.
+
+### The `GameState` ###
+At the beginning of each round, and each frame, you are sent a `GameState` object representing the state of the board at a point in time. This gives you access to information about your own tank (`.myTank`), enemy tanks (`otherTanks`), currently flying shells (`shells`), and board walls (`walls`). Note that `otherTanks` are stored in a `Dictionary` with a tank's unique ID as its key. IDs are not guarenteed to be persisted between runs. See the documentation in `GameState.swift` for all the available properties of `GameState`.
+
+## Custom Logging ##
+In your own fork, you may also easily modify which log levels are associated with which log types. Inside the `Log` class (`Client/Log.swift`) is the `LogTypes` struct. This struct conforms to `OptionSet` and simply acts as a bitmask of log types. You can change which types are associated with which levels by modifying lines such as those below:
+```swift
+/// Includes everything in level 1 plus `gameEvents` and `aiLogic`
+public static let level2: LogTypes = [
+    .level1,
+    .gameEvents,
+    .aiLogic
+]
+```
