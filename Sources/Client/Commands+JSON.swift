@@ -10,7 +10,39 @@ import Foundation
 import PlayerSupport
 
 
-extension Command {
+extension Command: Encodable {
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .go:
+            try container.encode(Action.go, forKey: .action)
+        case .stop:
+            try container.encode(Action.stop, forKey: .action)
+        case .turn(heading: let heading):
+            try container.encode(Action.turn, forKey: .action)
+            try container.encode(heading, forKey: .arg)
+        case .fire(heading: let heading):
+            try container.encode(Action.fire, forKey: .action)
+            try container.encode(heading, forKey: .arg)
+        case .setInfo(let info):
+            try container.encode(Action.setInfo, forKey: .action)
+            try container.encode(info, forKey: .arg)
+        }
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case action, arg
+    }
+    
+    /// Valid actions for JSON command objects
+    private enum Action: String, Encodable {
+        case go = "Command_Go"
+        case stop = "Command_Stop"
+        case turn = "Command_Turn"
+        case fire = "Command_Fire"
+        case setInfo = "Command_Info"
+    }
     
     /**
      Converts and returns `self` as JSON.
@@ -18,52 +50,13 @@ extension Command {
      - returns: `self` as JSON data
      */
     internal func json(readable: Bool = false) -> Data {
-        switch self {
-        case .go:
-            return json(withAction: .go, arg: nil, pretty: readable)
-        case .stop:
-            return json(withAction: .stop, arg: nil, pretty: readable)
-        case .turn(let heading):
-            return json(withAction: .turn, arg: heading, pretty: readable)
-        case .fire(let heading):
-            return json(withAction: .fire, arg: heading, pretty: readable)
-        case .setInfo(let info):
-            return json(withAction: .setInfo, arg: info, pretty: readable)
-        }
-    }
-    
-    /**
-     Converts the given command text and floating-point argument to JSON data.
-     */
-    private func json(withAction action: Action, arg: Any?, pretty: Bool = false) -> Data {
-        var dict = [String : Any]()
-        dict["\(JSONKey.action)"] = "\(action)"
-        if let arg = arg {
-            dict["\(JSONKey.arg)"] = arg
-        }
-        return try! JSONSerialization.data(withJSONObject: dict, options: pretty ? .prettyPrinted : [])
-    }
-    
-    /// Expected keys for JSON commands
-    private enum JSONKey: String, CustomStringConvertible {
-        case action = "action"
-        case arg = "arg"
-        
-        fileprivate var description: String {
-            return rawValue
-        }
-    }
-    
-    /// Valid actions for JSON command objects
-    private enum Action: String, CustomStringConvertible {
-        case go = "Command_Go"
-        case stop = "Command_Stop"
-        case turn = "Command_Turn"
-        case fire = "Command_Fire"
-        case setInfo = "Command_Info"
-        
-        var description: String {
-            return rawValue
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = readable ? .prettyPrinted : []
+        do {
+            return try encoder.encode(self)
+        } catch {
+            assertionFailure("\(error)")
+            return Data()
         }
     }
     
