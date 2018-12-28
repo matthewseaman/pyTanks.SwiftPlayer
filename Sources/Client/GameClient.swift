@@ -168,7 +168,7 @@ public class GameClient: WebSocketDelegate {
     private func log(error: Error) {
         
         func logDefault() {
-            log.print(error.localizedDescription, for: .errors)
+            log.print("\(error)", for: .errors)
         }
         
         let error = error as NSError

@@ -93,6 +93,7 @@ public class GameLoop {
                 processFrame()
                 continue runLoop
             case .off:
+                client.log.waitUntilDoneLogging()
                 break runLoop
             }
         }
