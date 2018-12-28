@@ -1,5 +1,5 @@
 //
-//  Commands.swift
+//  Command.swift
 //  pyTanks.SwiftPlayer
 //
 //  Created by Matthew Seaman on 5/6/17.

@@ -83,7 +83,8 @@ public class Log {
      - parameter generateMessage: A closure that generates and returns a message to log
      */
     public func print(ifRequested logTypes: LogTypes, _ generateMessage: () -> String) {
-        if (serialQueue.sync { return self.logTypes }).contains(logTypes) {
+        let types = serialQueue.sync { self.logTypes }
+        if types.contains(logTypes) {
             print(generateMessage(), for: logTypes)
         }
     }

@@ -8,6 +8,7 @@
 
 import Foundation
 import Dispatch
+import PlayerSupport
 
 
 public class GameLoop {
@@ -197,7 +198,7 @@ public class GameLoop {
         case .turn(let heading):
             gameState.myTank.heading = heading
         case .fire:
-            guard gameState.myTank.canShoot else { return false }
+            guard gameState.myTank.canShoot ?? false else { return false }
             gameState.myTank.canShoot = false
         }
         return true

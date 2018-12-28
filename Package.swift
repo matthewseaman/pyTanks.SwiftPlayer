@@ -9,6 +9,12 @@ let package = Package(
         .executable(
             name: "pyTanks",
             targets: ["pyTanks"]),
+        .library(
+            name: "PyPlayer",
+            targets: ["PlayerSupport"]),
+        .library(
+            name: "PyClient",
+            targets: ["ClientControl"]),
         ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -19,13 +25,19 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "pyTanks",
-            dependencies: ["Players", "Client", "Utils"]),
+            dependencies: ["ClientControl", "SimplePlayer"]),
         .target(
-            name: "Players",
-            dependencies: ["Client"]),
+            name: "ClientControl",
+            dependencies: ["Client", "PlayerSupport"]),
+        .target(
+            name: "SimplePlayer",
+            dependencies: ["PlayerSupport"]),
         .target(
             name: "Client",
-            dependencies: ["Starscream"]),
+            dependencies: ["PlayerSupport", "Starscream", "Utils"]),
+        .target(
+            name: "PlayerSupport",
+            dependencies: []),
         .target(
             name: "Utils",
             dependencies: []),
