@@ -38,7 +38,7 @@ extension Moveable {
  
  - note: This is a value type, so if used from multiple threads, each thread gets its own copy (not reference).
  */
-public struct GameState {
+public struct GameState: Decodable {
     
     /// True if a game is currently ongoing
     public var isGameOngoing: Bool
@@ -72,8 +72,24 @@ public struct GameState {
         self.walls = walls
     }
     
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.isGameOngoing = try container.decode(Bool.self, forKey: .isGameOngoing)
+        self.myTank = try container.decode(Tank.self, forKey: .myTank)
+        self.shells = try container.decode([Shell].self, forKey: .shells)
+        self.walls = try container.decode([Wall].self, forKey: .walls)
+        
+        let tanks = try container.decode([Tank].self, forKey: .otherTanks)
+        self.otherTanks = Dictionary(minimumCapacity: tanks.count)
+        tanks.forEach { otherTanks[$0.id] = $0 }
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case isGameOngoing = "ongoingGame", myTank, otherTanks = "tanks", shells, walls
+    }
+    
     /// Encapsulates information about a tank
-    public struct Tank: Moveable {
+    public struct Tank: Moveable, Decodable {
         
         /// The unique id of the tank. These values are not guarenteed to persist across connections.
         public var id: Int
@@ -136,10 +152,14 @@ public struct GameState {
             self.wins = wins
         }
         
+        private enum CodingKeys: String, CodingKey {
+            case id, centerX = "x", centerY = "y", heading, isMoving = "moving", isAlive = "alive", name, info, kills, wins, canShoot
+        }
+        
     }
     
     /// Encapsulates information about a shell. If a shell is on the map, it is moving.
-    public struct Shell: Moveable {
+    public struct Shell: Moveable, Decodable {
         
         /// The id of the shooting tank
         public var shooterId: Int
@@ -167,10 +187,14 @@ public struct GameState {
             self.heading = heading
         }
         
+        private enum CodingKeys: String, CodingKey {
+            case shooterId, centerX = "x", centerY = "y", heading
+        }
+        
     }
     
     /// Encapsulates information about a wall on the map
-    public struct Wall {
+    public struct Wall: Decodable {
         
         /// The width of the wall, in pixels
         public var width: Double
@@ -196,6 +220,10 @@ public struct GameState {
             self.height = height
             self.centerX = centerX
             self.centerY = centerY
+        }
+        
+        private enum CodingKeys: String, CodingKey {
+            case width, height, centerX = "x", centerY = "y"
         }
         
     }
