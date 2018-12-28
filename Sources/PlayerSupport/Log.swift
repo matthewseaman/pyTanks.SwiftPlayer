@@ -89,6 +89,11 @@ public class Log {
         }
     }
     
+    /// Blocks the current thread until any pending log messages have been logged.
+    public func waitUntilDoneLogging() {
+        serialQueue.sync {}
+    }
+    
     /// A collection of mix-and-match log types
     public struct LogTypes: OptionSet {
         
