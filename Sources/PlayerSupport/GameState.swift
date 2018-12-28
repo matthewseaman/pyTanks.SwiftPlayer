@@ -10,7 +10,7 @@ import Foundation
 
 
 /// An object that may be moved by a given distance in its existing heading
-internal protocol Moveable {
+public protocol Moveable {
     /// The x coordinate, in pixels, where larger x's are further right
     var centerX: Double { get set }
     /// The y coordinate, in pixels, where larger y's are further down
@@ -26,7 +26,7 @@ extension Moveable {
      
      - parameter distance: The number of pixels to move in the current heading
      */
-    internal mutating func move(_ distance: Double) {
+    public mutating func move(_ distance: Double) {
         self.centerX += cos(self.heading) * distance
         self.centerY -= sin(self.heading) * distance
     }
@@ -53,7 +53,7 @@ public struct GameState {
     public var shells: [Shell]
     
     /// All walls on the map for this match
-    public internal(set) var walls: [Wall]
+    public var walls: [Wall]
     
     /**
      Creates a new `GameState`
@@ -64,7 +64,7 @@ public struct GameState {
      - parameter shells: All shells currently on the map
      - parameter walls: All walls on the map for this match
      */
-    internal init(ongoingGame: Bool, myTank: Tank, otherTanks: [Int: Tank], shells: [Shell], walls: [Wall]) {
+    public init(ongoingGame: Bool, myTank: Tank, otherTanks: [Int: Tank], shells: [Shell], walls: [Wall]) {
         self.isGameOngoing = ongoingGame
         self.myTank = myTank
         self.otherTanks = otherTanks
@@ -75,6 +75,9 @@ public struct GameState {
     /// Encapsulates information about a tank
     public struct Tank: Moveable {
         
+        /// The unique id of the tank. These values are not guarenteed to persist across connections.
+        public var id: Int
+        
         /// The center x coordinate for the tank on the map
         public var centerX: Double
         
@@ -84,29 +87,54 @@ public struct GameState {
         /// The heading of the tank, in radians, from the positive x axis
         public var heading: Double
         
-        /// True iff the tank is moving
+        /// `true` iff the tank is moving
         public var isMoving: Bool
         
-        /// True iff the tank is still alive
+        /// `true` iff the tank is still alive
         public var isAlive: Bool
         
-        /// The unique id of the tank. These values are not guarenteed to persist across connections.
-        public var id: Int
+        /// `true` iff your tank can shoot. `nil` if this is someone else's tank
+        public var canShoot: Bool?
         
-        /// True iff the tank can shoot. `nil` if this is someone else's tank
-        public var canShoot: Bool!
+        /// The name of your tank. `nil` if this is someone else's tank
+        public var name: String?
         
-        /// The name of the tank. `nil` if this is someone else's tank
-        public var name: String!
-        
-        /// A player-set info string for the tank. `nil` if this is someone else's tank
-        public var info: String!
+        /// A player-set info string for your tank. `nil` if this is someone else's tank
+        public var info: String?
         
         /// The number of kills in the current round. `nil` if this is someone else's tank
-        public var kills: Int!
+        public var kills: Int?
         
         /// The number of rounds won. `nil` if this is someone else's tank
-        public var wins: Int!
+        public var wins: Int?
+        
+        /// Creates a new `Tank`.
+        ///
+        /// - Parameters:
+        ///   - id: The unique id of the tank. These values are not guarenteed to persist across connections.
+        ///   - centerX: The center x coordinate for the tank on the map
+        ///   - centerY: The center y coordinate for the tank on the map
+        ///   - heading: The heading of the tank, in radians, from the positive x axis
+        ///   - isMoving: `true` iff the tank is moving
+        ///   - isAlive: `true` iff the tank is still alive
+        ///   - canShoot: `true` iff your tank can shoot. `nil` if this is someone else's tank
+        ///   - name: The name of your tank. `nil` if this is someone else's tank
+        ///   - info: A player-set info string for your tank. `nil` if this is someone else's tank
+        ///   - kills: The number of kills in the current round. `nil` if this is someone else's tank
+        ///   - wins: The number of rounds won. `nil` if this is someone else's tank
+        public init(id: Int, centerX: Double, centerY: Double, heading: Double, isMoving: Bool, isAlive: Bool, canShoot: Bool?, name: String?, info: String?, kills: Int?, wins: Int?) {
+            self.id = id
+            self.centerX = centerX
+            self.centerY = centerY
+            self.heading = heading
+            self.isMoving = isMoving
+            self.isAlive = isAlive
+            self.canShoot = canShoot
+            self.name = name
+            self.info = info
+            self.kills = kills
+            self.wins = wins
+        }
         
     }
     
@@ -125,6 +153,20 @@ public struct GameState {
         /// The heading of the shell, in radians, from the positive x axis
         public var heading: Double
         
+        /// Creates a new `Shell`.
+        ///
+        /// - Parameters:
+        ///   - shooterId: The id of the shooting tank
+        ///   - centerX: The center x coordinate of the shell on the map
+        ///   - centerY: The center y coordinate of the shell on the map
+        ///   - heading: The heading of the shell, in radians, from the positive x axis
+        public init(shooterId: Int, centerX: Double, centerY: Double, heading: Double) {
+            self.shooterId = shooterId
+            self.centerX = centerX
+            self.centerY = centerY
+            self.heading = heading
+        }
+        
     }
     
     /// Encapsulates information about a wall on the map
@@ -141,6 +183,20 @@ public struct GameState {
         
         /// The center y coordinate of teh wall on the map
         public var centerY: Double
+        
+        /// Creates a new `Wall`.
+        ///
+        /// - Parameters:
+        ///   - width: The width of the wall, in pixels
+        ///   - height: The height of the wall, in pixels
+        ///   - centerX: The center x coordinate of teh wall on the map
+        ///   - centerY: The center y coordinate of teh wall on the map
+        public init(width: Double, height: Double, centerX: Double, centerY: Double) {
+            self.width = width
+            self.height = height
+            self.centerX = centerX
+            self.centerY = centerY
+        }
         
     }
     

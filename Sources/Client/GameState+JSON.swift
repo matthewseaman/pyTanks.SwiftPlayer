@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PlayerSupport
 
 
 extension GameState {
@@ -24,7 +25,7 @@ extension GameState {
      - throws: `JSONError` if the data is invalid JSON or does not contain a top-level dictionary
      */
     internal init(json: Data, loggingTo log: Log? = nil) throws {
-        self.init(ongoingGame: false, myTank: Tank(centerX: 0.0, centerY: 0.0, heading: 0.0, isMoving: false, isAlive: false, id: 0, canShoot: false, name: "None", info: nil, kills: 0, wins: 0), otherTanks: [:], shells: [], walls: [])
+        self.init(ongoingGame: false, myTank: Tank(id: 0, centerX: 0.0, centerY: 0.0, heading: 0.0, isMoving: false, isAlive: false, canShoot: false, name: "None", info: nil, kills: 0, wins: 0), otherTanks: [:], shells: [], walls: [])
         try self.update(with: json, loggingTo: log)
     }
     
@@ -171,7 +172,7 @@ extension GameState {
             
             for tankDict in tanksList {
                 
-                var tank = Tank(centerX: 0.0, centerY: 0.0, heading: 0.0, isMoving: false, isAlive: false, id: 0, canShoot: nil, name: nil, info: nil, kills: nil, wins: nil)
+                var tank = Tank(id: 0, centerX: 0.0, centerY: 0.0, heading: 0.0, isMoving: false, isAlive: false, canShoot: nil, name: nil, info: nil, kills: nil, wins: nil)
                 
                 // x
                 if let x = tankDict["\(JSONKey.x)"] as? Double {

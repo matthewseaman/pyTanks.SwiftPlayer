@@ -6,7 +6,7 @@
 //
 //
 
-import Client
+import PlayerSupport
 import GameplayKit
 
 
@@ -60,7 +60,7 @@ public struct SimplePlayer: Player {
         }
         
         // Shoot at someone without paying attention to walls
-        if gameState.myTank.canShoot && !gameState.otherTanks.isEmpty {
+        if gameState.myTank.canShoot ?? false && !gameState.otherTanks.isEmpty {
             // choose tank to shoot at
             let index = GKRandomDistribution(randomSource: randomSource, lowestValue: 0, highestValue: gameState.otherTanks.count - 1).nextInt()
             let target = Array(gameState.otherTanks)[index].value
