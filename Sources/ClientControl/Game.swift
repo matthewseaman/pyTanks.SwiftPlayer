@@ -32,8 +32,10 @@ public struct Game {
     /// Sets the game running.
     ///
     /// This method does not return until the connection with the server has been closed for whatever reason.
-    public func run() {
-        guard let clientConfig = ClientConfiguration.parse(from: CommandLine.arguments) else {
+    ///
+    /// - Parameter arguments: Arguments from the command line.
+    public func run(arguments: [String]) {
+        guard let clientConfig = ClientConfiguration.parse(from: arguments) else {
             exit(1)
         }
         

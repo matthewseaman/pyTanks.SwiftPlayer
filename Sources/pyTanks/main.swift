@@ -10,4 +10,4 @@ import ClientControl
 import SimplePlayer
 
 
-Game(player: SimplePlayer()).run()
+Game(player: SimplePlayer()).run(arguments: CommandLine.arguments)
