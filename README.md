@@ -17,12 +17,10 @@ The existing pyTanks.Player expects clients to be written in Python, however, al
 
 ### Requirements ###
 - macOS 10.12 Sierra or later
-- Swift 3.1 or later
+- Swift 4.2 or later
 - Swift Package Manager
 
 All library dependencies will automatically be collected upon compilation with Swift Package Manager.
-
-**Note: pyTanks is still in beta. API and functionality is subject to change.**
 
 ## Basic Structure ##
 This project contains several targets, which you may think of as submodules:
@@ -32,7 +30,7 @@ This project contains several targets, which you may think of as submodules:
 - pyTanks - The main executable which applies command line arguments, creates a `Player`, and sets the game loop running.
 
 ## Usage ##
-To compile the player, `cd` to the working directory, then run `source build_executable.sh`. This will place an executable program called `pyTanks` inside `.build/debug/`. It will also place a copy called `start` in the top-level directory.
+To compile the player, run `Utils/build-executable <config>`, where `<config>` is `debug` or `release`. This will place an executable program called `start` at the top level of the working directory.
 
 To run the previously-compiled executable, run `./start` from the top-level directory.
 

@@ -139,11 +139,11 @@ open class CommandLineArgumentParser {
         if fullSpecifier.hasPrefix("--") {
             isCommand = false
             isAbreviation = false
-            specifier = fullSpecifier.substring(from: fullSpecifier.index(fullSpecifier.startIndex, offsetBy: 2))
+            specifier = String(fullSpecifier[fullSpecifier.index(fullSpecifier.startIndex, offsetBy: 2)...])
         } else if fullSpecifier.hasPrefix("-") {
             isCommand = false
             isAbreviation = true
-            specifier = fullSpecifier.substring(from: fullSpecifier.index(after: fullSpecifier.startIndex))
+            specifier = String(fullSpecifier[fullSpecifier.index(after: fullSpecifier.startIndex)...])
         } else {
             isCommand = true
             isAbreviation = false
