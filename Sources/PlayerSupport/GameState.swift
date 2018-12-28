@@ -72,6 +72,22 @@ public struct GameState: Decodable {
         self.walls = walls
     }
     
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.isGameOngoing = try container.decode(Bool.self, forKey: .isGameOngoing)
+        self.myTank = try container.decode(Tank.self, forKey: .myTank)
+        self.shells = try container.decode([Shell].self, forKey: .shells)
+        self.walls = try container.decode([Wall].self, forKey: .walls)
+        
+        let tanks = try container.decode([Tank].self, forKey: .otherTanks)
+        self.otherTanks = Dictionary(minimumCapacity: tanks.count)
+        tanks.forEach { otherTanks[$0.id] = $0 }
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case isGameOngoing = "ongoingGame", myTank, otherTanks = "tanks", shells, walls
+    }
+    
     /// Encapsulates information about a tank
     public struct Tank: Moveable, Decodable {
         

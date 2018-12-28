@@ -26,21 +26,7 @@ extension GameState {
      */
     internal init(json: Data, loggingTo log: Log? = nil) throws {
         let decoder = JSONDecoder()
-        do {
-            self = try decoder.decode(GameState.self, from: json)
-        } catch let error as DecodingError {
-            switch error {
-            case .keyNotFound(let key, let context):
-                let path = context.codingPath + [key]
-                throw JSONError.missing(keyPath: path.map({ $0.stringValue }))
-            case .typeMismatch(_, let context):
-                throw JSONError.invalid(keyPath: context.codingPath.map({ $0.stringValue }))
-            case .valueNotFound(_, let context):
-                throw JSONError.missing(keyPath: context.codingPath.map({ $0.stringValue }))
-            case .dataCorrupted:
-                throw JSONError.notValidJSON
-            }
-        }
+        self = try decoder.decode(GameState.self, from: json)
     }
     
 }
