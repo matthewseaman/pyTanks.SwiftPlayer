@@ -115,12 +115,12 @@ public class GameClient: WebSocketDelegate {
         self.webSocket = nil
     }
     
-    public func websocketDidConnect(socket: WebSocket) {
+    public func websocketDidConnect(socket: WebSocketClient) {
         log.print("Connected to server", for: .connectAndDisconnect)
         self.onConnect()
     }
     
-    public func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
+    public func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
         if let err = error {
             log(error: err)
         }
@@ -130,7 +130,7 @@ public class GameClient: WebSocketDelegate {
     
     private var receivedFirstMessage = false
     
-    public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
+    public func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
         log.print("Received message from server: \(text)", for: .clientIO)
         
         receiveQueue.async {
@@ -143,7 +143,7 @@ public class GameClient: WebSocketDelegate {
         }
     }
     
-    public func websocketDidReceiveData(socket: WebSocket, data: Data) {
+    public func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
         log.print("Received binary message from server: \(data)", for: .clientIO)
     }
     
@@ -165,11 +165,13 @@ public class GameClient: WebSocketDelegate {
      
      - parameter error: The error to log
      */
-    private func log(error: NSError) {
+    private func log(error: Error) {
         
         func logDefault() {
             log.print(error.localizedDescription, for: .errors)
         }
+        
+        let error = error as NSError
         
         switch error.domain {
         case NSPOSIXErrorDomain:

@@ -63,7 +63,7 @@ public struct SimplePlayer: Player {
         if gameState.myTank.canShoot && !gameState.otherTanks.isEmpty {
             // choose tank to shoot at
             let index = GKRandomDistribution(randomSource: randomSource, lowestValue: 0, highestValue: gameState.otherTanks.count - 1).nextInt()
-            let (_, target) = Array(gameState.otherTanks)[index]
+            let target = Array(gameState.otherTanks)[index].value
             
             // Only shoot if alive
             if target.isAlive {
