@@ -83,7 +83,7 @@ The sequence of calls on the `Player` is as follows:
 7. `roundOver()` regardless of who won
 8. repeat steps 4–7 until termination
 
-Inside the `makeMove(withGameState:)` function, you return a list of commands for the tank. Commands are defined in the `Command` enum. Valid commands include `go`, `stop`, `turn`, and `fire`. See the documentation in `Client/Commands.swift`.
+Inside the `makeMove(withGameState:)` function, you return a list of commands for the tank. Commands are defined in the `Command` enum. Valid commands include `go`, `stop`, `turn`, and `fire`. See the documentation in `PlayerSupport/Commands.swift`.
 
 A few things to keep in mind:
 - Your tank will die after 1 hit.
