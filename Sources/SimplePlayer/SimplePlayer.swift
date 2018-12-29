@@ -6,8 +6,8 @@
 //
 //
 
+import Foundation
 import PlayerSupport
-import GameplayKit
 
 
 /**
@@ -23,15 +23,7 @@ public struct SimplePlayer: Player {
         return "Swift client using the example SimplePlayer."
     }
     
-    /// The random source responsible for generating random behaviors
-    public var randomSource = GKARC4RandomSource()
-    
     public init() {}
-    
-    /// A random distribution for choosing which direction to turn. Uniform floats [1/12, 1.0] from this distribution are multiplied by 2π to determine which direction to turn.
-    private lazy var turnRandomDistribution: GKRandomDistribution = {
-        return GKRandomDistribution(randomSource: self.randomSource, lowestValue: 1, highestValue: 12)
-    }()
     
     public func connectedToServer() {
         log.print("connectedToServer", for: .debug)
@@ -52,7 +44,7 @@ public struct SimplePlayer: Player {
         
         // Keep moving
         if !gameState.myTank.isMoving {
-            let turn = Command.turn(heading: Double(turnRandomDistribution.nextUniform() * 2 * Float.pi))
+            let turn = Command.turn(heading: Double.random(in: 1...12) * 2 * .pi)
             let move = Command.go
             commands.append(turn)
             commands.append(move)
@@ -62,8 +54,7 @@ public struct SimplePlayer: Player {
         // Shoot at someone without paying attention to walls
         if gameState.myTank.canShoot ?? false && !gameState.otherTanks.isEmpty {
             // choose tank to shoot at
-            let index = GKRandomDistribution(randomSource: randomSource, lowestValue: 0, highestValue: gameState.otherTanks.count - 1).nextInt()
-            let target = Array(gameState.otherTanks)[index].value
+            let target = gameState.otherTanks.randomElement()!.value
             
             // Only shoot if alive
             if target.isAlive {
