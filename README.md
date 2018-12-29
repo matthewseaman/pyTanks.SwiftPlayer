@@ -96,7 +96,7 @@ At the beginning of each round, and each frame, you are sent a `GameState` objec
 ## Custom Logging ##
 In your AI, you can log at anytime using the `Log` object set on your `Player`'s `log` property. Simply call `print(_:for:)` to print a message conditional on a specific log type being requested. You may pass `.debug` as the log type to treat it as a debug message that should only be printed if `--debug` was specified on the command line.
 
-In your own fork, you may also easily modify which log levels are associated with which log types. Inside the `Log` class (`Client/Log.swift`) is the `LogTypes` struct. This struct conforms to `OptionSet` and simply acts as a bitmask of log types. You can change which types are associated with which levels by modifying lines such as those below:
+In your own fork, you may also easily modify which log levels are associated with which log types. Inside the `Log` class (`PlayerSupport/Log.swift`) is the `LogTypes` struct. This struct conforms to `OptionSet` and simply acts as a bitmask of log types. You can change which types are associated with which levels by modifying lines such as those below:
 ```swift
 /// Includes everything in level 1 plus `gameEvents` and `aiLogic`
 public static let level2: LogTypes = [
