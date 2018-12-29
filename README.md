@@ -1,16 +1,16 @@
-# pyTanks.SwiftPlayer #
+# pyTanks.SwiftPlayer
 
 A Swift pyTanks Player client.
 
 ### What is pyTanks? ###
 
-pyTanks is a battlefield for Python tank AIs to fight.
+pyTanks is a battleground for Python AIs to fight it out.
 
 * [The Python Server](https://github.com/JoelEager/pyTanks.Server) manages the game and communicates with tank clients about game state.
 * [The JavaScript/HTML Viewer](https://github.com/JoelEager/pyTanks.Viewer) manages the display of the battlefield and the scoreboard.
 * Tank Player Clients manage and run Tank AIs, communicating with the server by sending and receiving JSON via web sockets.
   - [Python Player](https://github.com/JoelEager/pyTanks.Player) - Works on any OS with Python 3
-  - Swift Player - Works on macOS Sierra or later with Swift 4.2 and Swift Package Manager
+  - Swift Player - Works on macOS Sierra or later with Swift 4.2 and Swift Package Manager. You may also get it to run on Linux, but Linux is not officially supported at this time.
 
 ### Where does Swift come in? ###
 The existing pyTanks.Player expects clients to be written in Python, however, all communication happens via JSON and web sockets. Because these are open standards, a client may theoretically be written in any language. This project provides a Swift template for pyTank players.
@@ -18,16 +18,15 @@ The existing pyTanks.Player expects clients to be written in Python, however, al
 ### Requirements ###
 - macOS 10.12 Sierra or later
 - Swift 4.2 or later
-- Swift Package Manager
+- Swift Package Manager, which will automatically collect any dependencies upon building.
 
-All library dependencies will automatically be collected upon compilation with Swift Package Manager.
+## Vended Products ##
+This package contains 3 products that are publically vended:
+- `pyTanks` — An executable that runs the `SimplePlayer` example AI.
+- `PyPlayer` — A library that other packages can use to build custom `Player` brains.
+- `PyClient` — A library that other packages can use to build custom Player executables.
 
-## Basic Structure ##
-This project contains several targets, which you may think of as submodules:
-- Utils - Provides generic functionality, such as a command line argument parser
-- Client - Manages the main game loop and the background connection to the server
-- Player - Holds tank AIs that may be chosen.
-- pyTanks - The main executable which applies command line arguments, creates a `Player`, and sets the game loop running.
+*Rather than needing to fork this repo, you can get your own AI up and running by simply adding this package as a dependency to your own package.*
 
 ## Usage ##
 To compile the player, run `Utils/build-executable <config>`, where `<config>` is `debug` or `release`. This will place an executable program called `start` at the top level of the working directory.
@@ -51,11 +50,19 @@ The default player is `SimplePlayer`, which simply travels in random directions 
 To work on a fork in Xcode, run `swift package generate-xcodeproj` from the command line while inside the working directory. After opening the newly generated `pyTanks.SwiftPlayer.xcodeproj` file, be sure to change the project target to macOS 10.12 instead of 10.10. This allows it to be built, run, and debugged inside Xcode.
 
 ## Create Your Own Tank AI ##
-The pyTanks Swift Player is designed to allow the creation of many different `Player` AIs in the same project. The `main.swift` script inside the "pyTanks" target then initializes a specific `Player` and passes it to the game loop to act as the tank's brain. In this way, many different `Player` objects may be created, but only one may be used at a time.
 
 To create a new AI:
-- Conform an object to the `Player` protocol.
-- In `pyTanks/main.swift`, ensure the `player` constant is set to the `Player` instance you want.
+- Create a Swift package and add this one as a dependency.
+- In some target, `import PyPlayer` and conform an object to the `Player` protocol.
+- Create an executable target with code like the following:
+
+```swift
+import CustomPlayer
+import PyClient
+
+let myPlayer = CustomPlayer()
+Game(player: myPlayer).run(arguments: CommandLine.arguments)
+```
 
 Any object that conforms to the `Player` protocol acts as the brain for a tank. You can either create your own object to conform to this protocol or conform an existing one. The `Player` protocol has the following requirements:
 - `var playerDescription: String?` - This variable must provide `get` access to an optional textual description of the AI. This will be displayed in the pyTanks Viewer when a user clicks on the associated tank name.
@@ -69,11 +76,11 @@ Any object that conforms to the `Player` protocol acts as the brain for a tank. 
 The sequence of calls on the `Player` is as follows:
 1. `log` is set to a `Log` object before attempting to connect to the server.
 2. After a server connection is made, `playerDescription` is accessed and a new info string is sent to the server for the AI.
-3. connectedToServer() is called
-4. roundStarting(withGameState:)
-5. makeMove(withGameState:) each frame
-6. tankKilled() only if the tank was killed
-7. roundOver() regardless of who won
+3. `connectedToServer()` is called
+4. `roundStarting(withGameState:)`
+5. `makeMove(withGameState:)` each frame
+6. `tankKilled()` only if the tank was killed
+7. `roundOver()` regardless of who won
 8. repeat steps 4–7 until termination
 
 Inside the `makeMove(withGameState:)` function, you return a list of commands for the tank. Commands are defined in the `Command` enum. Valid commands include `go`, `stop`, `turn`, and `fire`. See the documentation in `Client/Commands.swift`.
