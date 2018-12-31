@@ -23,8 +23,8 @@ The existing pyTanks.Player expects clients to be written in Python, however, al
 ## Vended Products ##
 This package contains 3 products that are publically vended:
 - `pyTanks` — An executable that runs the `SimplePlayer` example AI.
-- `PyPlayer` — A library that other packages can use to build custom `Player` brains.
-- `PyClient` — A library that other packages can use to build custom Player executables.
+- `PlayerSupport` — A library that other packages can use to build custom `Player` brains.
+- `ClientControl` — A library that other packages can use to build custom Player executables.
 
 *Rather than needing to fork this repo, you can get your own AI up and running by simply adding this package as a dependency to your own package.*
 
@@ -53,12 +53,12 @@ To work on a fork in Xcode, run `swift package generate-xcodeproj` from the comm
 
 To create a new AI:
 - Create a Swift package and add this one as a dependency.
-- In some target, `import PyPlayer` and conform an object to the `Player` protocol.
+- In some target, `import PlayerSupport` and conform an object to the `Player` protocol.
 - Create an executable target with code like the following:
 
 ```swift
 import CustomPlayer
-import PyClient
+import ClientControl
 
 let myPlayer = CustomPlayer()
 Game(player: myPlayer).run(arguments: CommandLine.arguments)

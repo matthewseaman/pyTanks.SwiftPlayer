@@ -10,10 +10,10 @@ let package = Package(
             name: "pyTanks",
             targets: ["pyTanks"]),
         .library(
-            name: "PyPlayer",
+            name: "PlayerSupport",
             targets: ["PlayerSupport"]),
         .library(
-            name: "PyClient",
+            name: "ClientControl",
             targets: ["ClientControl"]),
         ],
     dependencies: [
