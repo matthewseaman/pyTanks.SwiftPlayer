@@ -39,7 +39,7 @@ public struct Game {
             exit(1)
         }
         
-        let gameConfig = GameConfiguration()
+        let gameConfig = GameConfiguration(fps: clientConfig.framesPerSecond)
         
         let client = GameClient(configuration: clientConfig)
         
