@@ -173,7 +173,7 @@ public class GameLoop {
         
         // Make move if needed
         if gameState.isGameOngoing && gameState.myTank.isAlive {
-            for command in player.makeMove(withGameState: gameState) {
+            if let command = player.makeMove(withGameState: gameState) {
                 if updateGameState(for: command) {
                     client.send(command: command)
                 }

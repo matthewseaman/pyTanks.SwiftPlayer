@@ -23,6 +23,9 @@ public struct SimplePlayer: Player {
         return "Swift client using the example SimplePlayer."
     }
     
+    /// `true` if `Command.go` should be sent on the next frame without further analysis.
+    private var sendGoOnNextFrame = false
+    
     public init() {}
     
     public func connectedToServer() {
@@ -37,18 +40,20 @@ public struct SimplePlayer: Player {
         // Nothing much to do here either
     }
     
-    public mutating func makeMove(withGameState gameState: GameState) -> [Command] {
+    public mutating func makeMove(withGameState gameState: GameState) -> Command? {
         log.print("makeMove", for: .debug)
         
-        var commands = [Command]()
+        if sendGoOnNextFrame {
+            sendGoOnNextFrame = false
+            log.print("Going", for: .gameEvents)
+            return Command.go
+        }
         
         // Keep moving
         if !gameState.myTank.isMoving {
-            let turn = Command.turn(heading: Double.random(in: -6...6) / 6 * .pi)
-            let move = Command.go
-            commands.append(turn)
-            commands.append(move)
-            log.print("Turned and started moving", for: .gameEvents)
+            sendGoOnNextFrame = true
+            log.print("Turning", for: .gameEvents)
+            return Command.turn(heading: Double.random(in: -6...6) / 6 * .pi)
         }
         
         // Shoot at someone without paying attention to walls
@@ -61,13 +66,12 @@ public struct SimplePlayer: Player {
                 let dx = target.centerX - gameState.myTank.centerX
                 let dy = target.centerY - gameState.myTank.centerY
                 let angle = atan2(-dy, dx) // y axis is flipped from standard radian system
-                let fire = Command.fire(heading: angle)
-                commands.append(fire)
-                log.print("Fired", for: .gameEvents)
+                log.print("Firing", for: .gameEvents)
+                return Command.fire(heading: angle)
             }
         }
         
-        return commands
+        return nil
     }
     
     public func tankKilled() {
