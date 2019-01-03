@@ -44,7 +44,7 @@ public struct SimplePlayer: Player {
         
         // Keep moving
         if !gameState.myTank.isMoving {
-            let turn = Command.turn(heading: Double.random(in: 1...12) * 2 * .pi)
+            let turn = Command.turn(heading: Double.random(in: -6...6) / 6 * .pi)
             let move = Command.go
             commands.append(turn)
             commands.append(move)
@@ -58,17 +58,9 @@ public struct SimplePlayer: Player {
             
             // Only shoot if alive
             if target.isAlive {
-                let deltaX = abs(target.centerX - gameState.myTank.centerX)
-                let deltaY = gameState.myTank.centerY - target.centerY
-                var angle: Double
-                if deltaX == 0 {
-                    angle = deltaY >= 0 ? .pi / 2 : 3 * .pi / 2
-                } else {
-                    angle = atan(deltaY / deltaX)
-                    if target.centerX < gameState.myTank.centerX {
-                        angle = .pi - angle
-                    }
-                }
+                let dx = target.centerX - gameState.myTank.centerX
+                let dy = target.centerY - gameState.myTank.centerY
+                let angle = atan2(-dy, dx) // y axis is flipped from standard radian system
                 let fire = Command.fire(heading: angle)
                 commands.append(fire)
                 log.print("Fired", for: .gameEvents)
