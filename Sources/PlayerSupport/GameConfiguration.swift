@@ -15,6 +15,11 @@
  */
 public struct GameConfiguration {
     
+    /// The FPS rate that will be maintained in an ideal scenario where processing doesn't take longer than it's supposed to.
+    ///
+    /// This value can be useful to the player so that time may be mapped to frames and vice versa.
+    public let targetFramesPerSecond: Int
+    
     /// A configuration for the map
     public let map = MapConfig()
     
@@ -25,7 +30,11 @@ public struct GameConfiguration {
     public let shell = ShellConfig()
     
     /// Creates a `GameConfiguration` with required values.
-    public init() {}
+    ///
+    /// - Parameter fps: The target frame rate for this game.
+    public init(fps: Int) {
+        self.targetFramesPerSecond = fps
+    }
     
     /**
      Represents a configuration for a game map. These values match with the server and are therefore immutable.
