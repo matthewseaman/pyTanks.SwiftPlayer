@@ -44,7 +44,7 @@ public struct SimplePlayer: Player {
         
         // Keep moving
         if !gameState.myTank.isMoving {
-            let turn = Command.turn(heading: Double.random(in: 1...12) * 2 * .pi)
+            let turn = Command.turn(heading: Double.random(in: -6...6) / 6 * .pi)
             let move = Command.go
             commands.append(turn)
             commands.append(move)
