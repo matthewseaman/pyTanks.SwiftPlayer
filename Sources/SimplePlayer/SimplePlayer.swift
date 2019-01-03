@@ -60,7 +60,7 @@ public struct SimplePlayer: Player {
             if target.isAlive {
                 let dx = target.centerX - gameState.myTank.centerX
                 let dy = target.centerY - gameState.myTank.centerY
-                let angle = atan2(-dy, dx) // y axis is flipped from radian system
+                let angle = atan2(-dy, dx) // y axis is flipped from standard radian system
                 let fire = Command.fire(heading: angle)
                 commands.append(fire)
                 log.print("Fired", for: .gameEvents)
