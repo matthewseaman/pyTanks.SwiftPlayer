@@ -17,7 +17,7 @@ public struct GameConfiguration {
     
     /// The FPS rate that will be maintained in an ideal scenario where processing doesn't take longer than it's supposed to.
     ///
-    /// This value can be useful to the player so that time may be mapped to frames and vice/versa.
+    /// This value can be useful to the player so that time may be mapped to frames and vice versa.
     public let targetFramesPerSecond: Int
     
     /// A configuration for the map
