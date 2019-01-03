@@ -46,9 +46,9 @@ public protocol Player {
      
      - parameter gameState: The updated game state
      
-     - returns: An optional list of commands for the tank to execute in order
+     - returns: An optional command for the tank to execute in order
      */
-    mutating func makeMove(withGameState gameState: GameState) -> [Command]
+    mutating func makeMove(withGameState gameState: GameState) -> Command?
     
     /**
      Called when the player's tank is killed.
