@@ -30,6 +30,8 @@ public struct GameConfiguration {
     public let shell = ShellConfig()
     
     /// Creates a `GameConfiguration` with required values.
+    ///
+    /// - Parameter fps: The target frame rate for this game.
     public init(fps: Int) {
         self.targetFramesPerSecond = fps
     }
